@@ -17,7 +17,7 @@ class UsuarioMapperTest {
         UsuarioRequestDTO requestDTO = UsuarioTestFactory.criarUsuarioRequestDTO();
         Usuario usuarioEsperado = UsuarioTestFactory.criarUsuarioDomain();
 
-        Usuario resultado = UsuarioMapper.toDomain(requestDTO);
+        Usuario resultado = UsuarioMapper.toDomainDto(requestDTO);
 
         assertThat(resultado)
                 .isNotNull()
@@ -76,7 +76,7 @@ class UsuarioMapperTest {
         UsuarioEntity entity = UsuarioTestFactory.criarUsuarioEntity();
         Usuario usuarioEsperado = UsuarioTestFactory.criarUsuarioDomainComId();
 
-        Usuario resultado = UsuarioMapper.toDomain(entity);
+        Usuario resultado = UsuarioMapper.toDomainDto(entity);
 
         assertThat(resultado)
                 .isNotNull()

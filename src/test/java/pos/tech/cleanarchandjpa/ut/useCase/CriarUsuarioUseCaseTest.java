@@ -14,7 +14,7 @@ import pos.tech.cleanarchandjpa.core.dto.UsuarioOutput;
 import pos.tech.cleanarchandjpa.core.exception.DadosInvalidosException;
 import pos.tech.cleanarchandjpa.core.exception.UsuarioJaExisteException;
 import pos.tech.cleanarchandjpa.core.gateway.UsuarioGateway;
-import pos.tech.cleanarchandjpa.core.usecase.CriarUsuarioUseCase;
+import pos.tech.cleanarchandjpa.core.usecase.usuario.CriarUsuarioUseCase;
 
 import java.util.Optional;
 import java.util.UUID;

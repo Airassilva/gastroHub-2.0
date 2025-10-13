@@ -1,11 +1,20 @@
 package pos.tech.cleanarchandjpa.infra.gateway;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import pos.tech.cleanarchandjpa.core.domain.PaginacaoResult;
 import pos.tech.cleanarchandjpa.core.domain.Usuario;
+import pos.tech.cleanarchandjpa.core.domain.ParametrosPag;
 import pos.tech.cleanarchandjpa.core.gateway.UsuarioGateway;
+import pos.tech.cleanarchandjpa.infra.database.entity.UsuarioEntity;
 import pos.tech.cleanarchandjpa.infra.database.mapper.UsuarioMapper;
 import pos.tech.cleanarchandjpa.infra.database.repository.UsuarioRepository;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public class UsuarioRepositoryGateway implements UsuarioGateway {
     private final UsuarioRepository usuarioRepository;
@@ -17,21 +26,61 @@ public class UsuarioRepositoryGateway implements UsuarioGateway {
     @Override
     public Optional<Usuario> criarUsuario(Usuario usuario) {
         var novoUsuario = UsuarioMapper.toEntity(usuario);
-        usuarioRepository.save(novoUsuario);
-        return Optional.empty();
+        var usuarioEncontrado = usuarioRepository.save(novoUsuario);
+        return Optional.ofNullable(UsuarioMapper.toDomain(usuarioEncontrado));
     }
 
     @Override
     public Optional<Usuario> buscarUsuarioPorCpf(Usuario usuario) {
         var novoUsuario = UsuarioMapper.toEntity(usuario);
-        usuarioRepository.findByCpf(novoUsuario.getCpf());
-        return Optional.empty();
+        return usuarioRepository.findByCpf(novoUsuario.getCpf())
+                .flatMap(UsuarioMapper::toDomainOptional);
     }
 
     @Override
     public Optional<Usuario> buscarUsuarioPorCnpj(Usuario usuario) {
         var novoUsuario = UsuarioMapper.toEntity(usuario);
-        usuarioRepository.findByCnpj(novoUsuario.getCnpj());
-        return Optional.empty();
+        return usuarioRepository.findByCnpj(novoUsuario.getCnpj())
+                .flatMap(UsuarioMapper::toDomainOptional);
+    }
+
+    @Override
+    public PaginacaoResult<Usuario> buscarTodosOsUsuarios(ParametrosPag parametrosPag) {
+        Sort.Direction direction = "DESC".equalsIgnoreCase(parametrosPag.sortDirection())
+                ? Sort.Direction.DESC
+                : Sort.Direction.ASC;
+
+        Pageable pageable = PageRequest.of(
+                parametrosPag.page(),
+                parametrosPag.pageSize(),
+                Sort.by(direction, parametrosPag.sortBy())
+        );
+
+        Page<UsuarioEntity> page = usuarioRepository.findAllAtivo(pageable);
+
+        List<Usuario> usuarios = page.getContent().stream()
+                .map(UsuarioMapper::toDomain)
+                .toList();
+
+        return new PaginacaoResult<>(
+                usuarios,
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.hasNext(),
+                page.hasPrevious()
+        );
+    }
+
+    @Override
+    public Optional<Usuario> buscarUsuario(Usuario usuario) {
+        return usuarioRepository.findById(usuario.getId())
+                .flatMap(UsuarioMapper::toDomainOptional);
+    }
+
+    @Override
+    public void deletarUsuario(UUID id) {
+        usuarioRepository.deleteById(id);
     }
 }

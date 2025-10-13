@@ -5,21 +5,25 @@ import lombok.NoArgsConstructor;
 import pos.tech.cleanarchandjpa.core.domain.Endereco;
 import pos.tech.cleanarchandjpa.core.domain.TipoUsuario;
 import pos.tech.cleanarchandjpa.core.domain.Usuario;
+import pos.tech.cleanarchandjpa.core.dto.UsuarioOutput;
+import pos.tech.cleanarchandjpa.core.exception.UsuarioNaoEncontradoException;
 import pos.tech.cleanarchandjpa.infra.database.entity.EnderecoEntity;
 import pos.tech.cleanarchandjpa.infra.database.entity.TipoUsuarioEntity;
 import pos.tech.cleanarchandjpa.infra.database.entity.UsuarioEntity;
 import pos.tech.cleanarchandjpa.infra.dto.UsuarioRequestDTO;
 import pos.tech.cleanarchandjpa.infra.dto.UsuarioResponseDTO;
+import pos.tech.cleanarchandjpa.infra.dto.UsuarioUpdateDTO;
 
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UsuarioMapper {
 
     // DTO para Domínio
-    public static Usuario toDomain(UsuarioRequestDTO dto) {
+    public static Usuario toDomainDto(UsuarioRequestDTO dto) {
         return new Usuario(
                 dto.nome(),
                 dto.email(),
@@ -33,9 +37,40 @@ public class UsuarioMapper {
         );
     }
 
-    //domínio para dto
+    public static Usuario toDomainDtoUp(UsuarioUpdateDTO dto) {
+        return new Usuario(
+                dto.id(),
+                dto.email(),
+                dto.endereco()
+        );
+    }
+
+    //domínio para dto da infra
     public static UsuarioResponseDTO toResponseDTO(Usuario domain) {
-        return new UsuarioResponseDTO(domain.getId(), domain.getNome(), domain.getEmail());
+        return new UsuarioResponseDTO(
+                domain.getId(),
+                domain.getNome(),
+                domain.getEmail());
+    }
+
+    public static Optional<UsuarioResponseDTO> toResponseDtoOptional(Optional<Usuario> domain) {
+        return domain.map(UsuarioMapper::toResponseDTO);
+    }
+    //dominio para dto do core
+    public static UsuarioOutput toOutPutDTO(Optional<Usuario> domain) {
+       var dto = toResponseDtoOptional(domain);
+        if (dto.isEmpty()) {
+            throw new UsuarioNaoEncontradoException("Usuário não encontrado");
+        }
+        return new UsuarioOutput(dto.get().getId(), dto.get().getNome(), dto.get().getEmail());
+    }
+
+    public static UsuarioResponseDTO toDTODto(UsuarioOutput output) {
+        return new UsuarioResponseDTO(
+                output.getId(),
+                output.getNome(),
+                output.getEmail()
+        );
     }
 
     // Domínio para Entidade
@@ -129,5 +164,12 @@ public class UsuarioMapper {
                 tipoUsuarioDomain,
                 enderecoDomain
         );
+    }
+
+    public static Optional<Usuario> toDomainOptional(UsuarioEntity entity) {
+        if (entity == null) {
+            return Optional.empty();
+        }
+        return Optional.of(toDomain(entity));
     }
 }

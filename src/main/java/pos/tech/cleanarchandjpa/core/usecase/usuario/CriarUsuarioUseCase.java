@@ -1,10 +1,11 @@
-package pos.tech.cleanarchandjpa.core.usecase;
+package pos.tech.cleanarchandjpa.core.usecase.usuario;
 
 import pos.tech.cleanarchandjpa.core.domain.Usuario;
 import pos.tech.cleanarchandjpa.core.dto.UsuarioOutput;
 import pos.tech.cleanarchandjpa.core.exception.DadosInvalidosException;
 import pos.tech.cleanarchandjpa.core.exception.UsuarioJaExisteException;
 import pos.tech.cleanarchandjpa.core.gateway.UsuarioGateway;
+import pos.tech.cleanarchandjpa.core.usecase.ValidarDocumentosUseCase;
 
 
 public class CriarUsuarioUseCase {
@@ -16,21 +17,12 @@ public class CriarUsuarioUseCase {
     }
 
     public UsuarioOutput cadastrarUsuario(Usuario usuario) throws DadosInvalidosException, UsuarioJaExisteException {
-        validarDocumentoObrigatorio(usuario);
+        ValidarDocumentosUseCase.validarDocumentoObrigatorio(usuario);
         verificarDuplicidade(usuario);
 
         usuarioGateway.criarUsuario(usuario);
 
         return new UsuarioOutput(usuario.getId(), usuario.getNome(), usuario.getEmail());
-    }
-
-    private void validarDocumentoObrigatorio(Usuario usuario) throws DadosInvalidosException {
-        boolean cpfValido = usuario.getCpf() != null && !usuario.getCpf().isBlank();
-        boolean cnpjValido = usuario.getCnpj() != null && !usuario.getCnpj().isBlank();
-
-        if (!cpfValido && !cnpjValido) {
-            throw new DadosInvalidosException("CPF ou CNPJ devem ser informados.");
-        }
     }
 
     private void verificarDuplicidade(Usuario usuario) throws UsuarioJaExisteException {

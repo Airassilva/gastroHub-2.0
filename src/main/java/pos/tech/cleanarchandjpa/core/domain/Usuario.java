@@ -48,4 +48,10 @@ public class Usuario {
         this.tipoUsuario = tipoUsuario;
         this.endereco = endereco;
     }
+
+    public Usuario(UUID id, String email, Endereco endereco) {
+        this.id = id;
+        this.email = email;
+        this.endereco = endereco;
+    }
 }
