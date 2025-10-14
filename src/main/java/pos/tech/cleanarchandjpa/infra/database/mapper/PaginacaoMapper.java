@@ -6,12 +6,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import pos.tech.cleanarchandjpa.core.domain.Cardapio;
 import pos.tech.cleanarchandjpa.core.domain.Restaurante;
 import pos.tech.cleanarchandjpa.core.domain.Usuario;
+import pos.tech.cleanarchandjpa.core.dto.cardapio.CardapioResponseDTO;
 import pos.tech.cleanarchandjpa.core.dto.paginacao.PaginacaoResult;
 import pos.tech.cleanarchandjpa.core.dto.paginacao.ParametrosPag;
 import pos.tech.cleanarchandjpa.core.dto.restaurante.RestauranteResponseDTO;
 import pos.tech.cleanarchandjpa.core.dto.usuario.UsuarioResponseDTO;
+import pos.tech.cleanarchandjpa.infra.database.entity.CardapioEntity;
 import pos.tech.cleanarchandjpa.infra.database.entity.RestauranteEntity;
 
 import java.util.List;
@@ -51,6 +54,21 @@ public class PaginacaoMapper {
         );
     }
 
+    public static PaginacaoResult<CardapioResponseDTO> fromDtoCardapio(PaginacaoResult<Cardapio> result) {
+        List<CardapioResponseDTO> dtos = result.content().stream()
+                .map(u -> new CardapioResponseDTO(u.getId(), u.getNome(), u.getDescricao()))
+                .toList();
+        return new PaginacaoResult<>(
+                dtos,
+                result.page(),
+                result.pageSize(),
+                result.totalElements(),
+                result.totalPages(),
+                result.hasNext(),
+                result.hasPrevious()
+        );
+    }
+
     public static PaginacaoResult<Restaurante> fromEntityPage(Page<RestauranteEntity> page) {
         List<Restaurante> restaurantes = page.getContent()
                 .stream()
@@ -59,6 +77,23 @@ public class PaginacaoMapper {
 
         return new PaginacaoResult<>(
                 restaurantes,
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.hasNext(),
+                page.hasPrevious()
+        );
+    }
+
+    public static PaginacaoResult<Cardapio> fromEntityPageCardapio(Page<CardapioEntity> page) {
+        List<Cardapio> cardapios = page.getContent()
+                .stream()
+                .map(CardapioMapper::paraDominioDeEntidade)
+                .toList();
+
+        return new PaginacaoResult<>(
+                cardapios,
                 page.getNumber(),
                 page.getSize(),
                 page.getTotalElements(),

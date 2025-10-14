@@ -1,6 +1,7 @@
 package pos.tech.cleanarchandjpa.infra.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import pos.tech.cleanarchandjpa.infra.database.mapper.UsuarioMapper;
 import java.util.Optional;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/usuario")
 public class UsuarioController {
@@ -26,13 +28,6 @@ public class UsuarioController {
     private final ListaDeUsuariosUseCase listaDeUsuariosUseCase;
     private final AtualizarUsuarioComEnderecoUseCase atualizarUsuarioComEnderecoUseCase;
     private final DeletarUsuarioUseCase deletarUsuarioUseCase;
-
-    public UsuarioController(CriarUsuarioUseCase criarUsuarioUseCase, ListaDeUsuariosUseCase listaDeUsuariosUseCase, AtualizarUsuarioComEnderecoUseCase atualizarUsuarioComEnderecoUseCase, DeletarUsuarioUseCase deletarUsuarioUseCase) {
-        this.criarUsuarioUseCase = criarUsuarioUseCase;
-        this.listaDeUsuariosUseCase = listaDeUsuariosUseCase;
-        this.atualizarUsuarioComEnderecoUseCase = atualizarUsuarioComEnderecoUseCase;
-        this.deletarUsuarioUseCase = deletarUsuarioUseCase;
-    }
 
     @PostMapping
     public ResponseEntity<Optional<UsuarioResponseDTO>> cadastrarUsuario(@Valid @RequestBody UsuarioRequestDTO usuarioRequestDTO) throws UsuarioJaExisteException, DadosInvalidosException {
@@ -50,7 +45,7 @@ public class UsuarioController {
         return ResponseEntity.ok(pageDto);
     }
 
-    @PutMapping("/atualizar/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> atualizarUsuario(@PathVariable("id") UUID id, @Valid @RequestBody UsuarioUpdateDTO usuarioUpdateDTO) {
         var usuario  = UsuarioMapper.toDomainDtoUp(usuarioUpdateDTO);
         var usuarioAtualizado = atualizarUsuarioComEnderecoUseCase.atualizarUsuarioComEndereco(usuario, id);

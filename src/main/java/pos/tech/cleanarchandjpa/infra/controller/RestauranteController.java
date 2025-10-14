@@ -1,6 +1,7 @@
 package pos.tech.cleanarchandjpa.infra.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import pos.tech.cleanarchandjpa.infra.database.mapper.RestauranteMapper;
 
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/restaurante")
 public class RestauranteController {
@@ -23,13 +25,6 @@ public class RestauranteController {
     private final ListarRestauranteUseCase listarRestauranteUsecase;
     private final DeletarRestauranteUseCase deletarRestauranteUseCase;
     private final AtualizarRestauranteComEnderecoUseCase atualizarRestauranteComEnderecoUseCase;
-
-    public RestauranteController(CriarRestauranteUsecase criarRestauranteUsecase, ListarRestauranteUseCase listarRestauranteUsecase, DeletarRestauranteUseCase deletarRestauranteUseCase, AtualizarRestauranteComEnderecoUseCase atualizarRestauranteComEnderecoUseCase) {
-        this.criarRestauranteUsecase = criarRestauranteUsecase;
-        this.listarRestauranteUsecase = listarRestauranteUsecase;
-        this.deletarRestauranteUseCase = deletarRestauranteUseCase;
-        this.atualizarRestauranteComEnderecoUseCase = atualizarRestauranteComEnderecoUseCase;
-    }
 
     @PostMapping
     public ResponseEntity<RestauranteResponseDTO> criarRestaurante(@RequestBody @Valid RestauranteRequestDTO requestDTO){
@@ -47,7 +42,7 @@ public class RestauranteController {
         return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
 
-    @PutMapping("/atualizar/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<RestauranteResponseDTO> atualizarRestaurante(@PathVariable("id") UUID id, @Valid @RequestBody RestauranteUpdateDTO updateDTO){
         var dominio =  RestauranteMapper.paraDominioDeDTO(updateDTO);
         var restaurante = atualizarRestauranteComEnderecoUseCase.atualizarRestauranteComEndereco(dominio, id);
