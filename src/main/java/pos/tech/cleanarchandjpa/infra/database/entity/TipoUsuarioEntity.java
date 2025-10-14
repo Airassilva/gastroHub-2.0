@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import pos.tech.cleanarchandjpa.core.domain.TipoUsuario;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +13,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "tipo_usuario")
 public class TipoUsuarioEntity {
@@ -28,10 +29,12 @@ public class TipoUsuarioEntity {
     @JsonIgnore
     private List<UsuarioEntity> usuarios = new ArrayList<>();
 
-    public TipoUsuarioEntity(TipoUsuario tipoUsuario) {
-        this.tipoUsuario = tipoUsuario.toString();
-    }
+    private boolean ativo;
 
-    public TipoUsuarioEntity() {
+    public TipoUsuarioEntity(UUID id, String tipoUsuario, List<UsuarioEntity> usuarios) {
+        this.id = id;
+        this.tipoUsuario = tipoUsuario;
+        this.usuarios = usuarios;
+        ativo = true;
     }
 }

@@ -8,14 +8,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import pos.tech.cleanarchandjpa.core.domain.Cardapio;
 import pos.tech.cleanarchandjpa.core.domain.Restaurante;
+import pos.tech.cleanarchandjpa.core.domain.TipoUsuario;
 import pos.tech.cleanarchandjpa.core.domain.Usuario;
 import pos.tech.cleanarchandjpa.core.dto.cardapio.CardapioResponseDTO;
 import pos.tech.cleanarchandjpa.core.dto.paginacao.PaginacaoResult;
 import pos.tech.cleanarchandjpa.core.dto.paginacao.ParametrosPag;
 import pos.tech.cleanarchandjpa.core.dto.restaurante.RestauranteResponseDTO;
+import pos.tech.cleanarchandjpa.core.dto.tipousuario.TipoUsuarioResponseDTO;
 import pos.tech.cleanarchandjpa.core.dto.usuario.UsuarioResponseDTO;
 import pos.tech.cleanarchandjpa.infra.database.entity.CardapioEntity;
 import pos.tech.cleanarchandjpa.infra.database.entity.RestauranteEntity;
+import pos.tech.cleanarchandjpa.infra.database.entity.TipoUsuarioEntity;
 
 import java.util.List;
 
@@ -136,6 +139,38 @@ public class PaginacaoMapper {
                 parametrosPag.page(),
                 parametrosPag.pageSize(),
                 Sort.by(direction, parametrosPag.sortBy())
+        );
+    }
+
+    public static PaginacaoResult<TipoUsuario> dePageParaPaginacaoTipoUsuario(Page<TipoUsuarioEntity> page) {
+        List<TipoUsuario> tipoUsuarios = page.getContent()
+                .stream()
+                .map(TipoUsuarioMapper::paraDominio)
+                .toList();
+
+        return new PaginacaoResult<>(
+                tipoUsuarios,
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.hasNext(),
+                page.hasPrevious()
+        );
+    }
+
+    public static PaginacaoResult<TipoUsuarioResponseDTO> paraResponsePaginacaoTipoUsuario(PaginacaoResult<TipoUsuario> usuarios) {
+        List<TipoUsuarioResponseDTO> dtos = usuarios.content().stream()
+                .map(u -> new TipoUsuarioResponseDTO(u.getId(), u.getNomeTipoUsuario(), u.getUsuario()))
+                .toList();
+        return new PaginacaoResult<>(
+                dtos,
+                usuarios.page(),
+                usuarios.pageSize(),
+                usuarios.totalElements(),
+                usuarios.totalPages(),
+                usuarios.hasNext(),
+                usuarios.hasPrevious()
         );
     }
 }
