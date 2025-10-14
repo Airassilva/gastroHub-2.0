@@ -46,7 +46,6 @@ public class EnderecoMapper {
                 enderecoEncontrado.getCidade(),
                 enderecoEncontrado.getEstado(),
                 enderecoEncontrado.getCep(),
-                enderecoEncontrado.getDataUltimaALteracao(),
                 enderecoEncontrado.getNumero()
         );
     }
