@@ -76,7 +76,7 @@ public class UsuarioRepositoryGateway implements UsuarioGateway {
 
     @Override
     public Usuario buscarUsuario(UUID id) {
-        var usuario = usuarioRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Restaurante não encontrado"));
+        var usuario = usuarioRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
         return UsuarioMapper.paraDominio(usuario);
     }
 

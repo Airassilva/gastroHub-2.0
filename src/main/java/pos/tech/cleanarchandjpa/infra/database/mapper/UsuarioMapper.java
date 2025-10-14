@@ -3,7 +3,6 @@ package pos.tech.cleanarchandjpa.infra.database.mapper;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import pos.tech.cleanarchandjpa.core.domain.Endereco;
-import pos.tech.cleanarchandjpa.core.domain.TipoUsuario;
 import pos.tech.cleanarchandjpa.core.domain.Usuario;
 import pos.tech.cleanarchandjpa.infra.database.entity.EnderecoEntity;
 import pos.tech.cleanarchandjpa.infra.database.entity.TipoUsuarioEntity;
@@ -120,14 +119,6 @@ public class UsuarioMapper {
             }
         }
 
-        TipoUsuario tipoUsuarioDomain = null;
-        if (entity.getTipoUsuarioEntity() != null) {
-            tipoUsuarioDomain = new TipoUsuario(
-                    entity.getTipoUsuarioEntity().getId(),
-                    entity.getTipoUsuarioEntity().getTipoUsuario()
-            );
-        }
-
         return new Usuario(
                 entity.getId(),
                 entity.getNome(),
@@ -135,12 +126,8 @@ public class UsuarioMapper {
                 entity.getCpf(),
                 entity.getCnpj(),
                 entity.getTelefone(),
-                entity.isAtivo(),
-                entity.getDataCriacao(),
-                entity.getDataUltimaAlteracao(),
                 entity.getLogin(),
                 entity.getSenha(),
-                tipoUsuarioDomain,
                 enderecoDomain
         );
     }

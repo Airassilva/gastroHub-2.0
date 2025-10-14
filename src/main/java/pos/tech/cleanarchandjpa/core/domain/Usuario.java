@@ -1,8 +1,12 @@
 package pos.tech.cleanarchandjpa.core.domain;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.br.CNPJ;
+import org.hibernate.validator.constraints.br.CPF;
 import pos.tech.cleanarchandjpa.core.exception.BadRequestException;
 
 import java.util.Date;
@@ -34,7 +38,6 @@ public class Usuario implements PossuiEndereco{
         this.login = validateNotBlank(login, "login");
         this.senha = validateNotBlank(senha, "senha");
     }
-
 
     public void atualizarDadosBasicos(Usuario usuario) {
         atualizeSePresente(usuario.getEmail(), emailP -> this.email = emailP);
