@@ -34,7 +34,7 @@ public class RestauranteMapper {
                         LocalTime.parse(h.fechamento())
                 ))
                 .toList();
-        var endereco =  EnderecoMapper.toDomainDto(requestDTO.endereco());
+        var endereco =  EnderecoMapper.deDtoParaDominio(requestDTO.endereco());
 
         return new Restaurante(
                 requestDTO.tipoDeCozinha(),
@@ -72,7 +72,7 @@ public class RestauranteMapper {
     }
 
     public static Restaurante paraDominioDeDTO(RestauranteUpdateDTO updateDTO) {
-        var endereco = EnderecoMapper.toDomainDto(updateDTO.enderecoDTO());
+        var endereco = EnderecoMapper.deDtoParaDominio(updateDTO.enderecoDTO());
         var horarios = RestauranteMapper.toHorarioFuncionamentoList(updateDTO.horarioFuncionamentoDTO());
 
         return new Restaurante(
@@ -97,7 +97,6 @@ public class RestauranteMapper {
         );
     }
 
-    // Entidade para Domínio
     public static Restaurante paraDominio(RestauranteEntity entity) {
         if (entity == null) return null;
 
@@ -152,7 +151,6 @@ public class RestauranteMapper {
         );
     }
 
-    // Domínio para Entidade
     public static RestauranteEntity paraEntidade(Restaurante domain) {
         if (domain == null) return null;
 

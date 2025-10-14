@@ -17,9 +17,8 @@ import java.util.*;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UsuarioMapper {
 
-    // DTO para Domínio
-    public static Usuario toDomainDto(UsuarioRequestDTO dto) {
-       var endereco =  EnderecoMapper.toDomainDto(dto.enderecoDTO());
+    public static Usuario paraDominioDeDto(UsuarioRequestDTO dto) {
+       var endereco =  EnderecoMapper.deDtoParaDominio(dto.enderecoDTO());
         return new Usuario(
                null,
                 dto.nome(),
@@ -33,10 +32,10 @@ public class UsuarioMapper {
                 );
     }
 
-    public static Usuario toDomainDtoUp(UsuarioUpdateDTO dto) {
-        var endereco =  EnderecoMapper.toDomainDto(dto.enderecoDTO());
+    public static Usuario paraDominioDeDtoUpdate(UsuarioUpdateDTO dto) {
+        var endereco =  EnderecoMapper.deDtoParaDominio(dto.enderecoDTO());
         return new Usuario(
-                dto.id(),
+                null,
                 dto.email(),
                 endereco,
                 dto.login(),
@@ -44,8 +43,7 @@ public class UsuarioMapper {
         );
     }
 
-    //domínio para dto da infra
-    public static UsuarioResponseDTO toResponseDTO(Usuario domain) {
+    public static UsuarioResponseDTO paraResponseDeDomain(Usuario domain) {
         return new UsuarioResponseDTO(
                 domain.getId(),
                 domain.getNome(),
@@ -53,11 +51,10 @@ public class UsuarioMapper {
     }
 
     public static Optional<UsuarioResponseDTO> toResponseDtoOptional(Optional<Usuario> domain) {
-        return domain.map(UsuarioMapper::toResponseDTO);
+        return domain.map(UsuarioMapper::paraResponseDeDomain);
     }
 
-    // Domínio para Entidade
-    public static UsuarioEntity toEntity(Usuario usuario) {
+    public static UsuarioEntity paraEntidade(Usuario usuario) {
         if (usuario == null) {
             return null;
         }
@@ -102,8 +99,7 @@ public class UsuarioMapper {
     }
 
 
-    // Entidade para Domínio
-    public static Usuario toDomain(UsuarioEntity entity) {
+    public static Usuario paraDominio(UsuarioEntity entity) {
         if (entity == null) {
             return null;
         }
@@ -149,10 +145,10 @@ public class UsuarioMapper {
         );
     }
 
-    public static Optional<Usuario> toDomainOptional(UsuarioEntity entity) {
+    public static Optional<Usuario> paraDominioOptional(UsuarioEntity entity) {
         if (entity == null) {
             return Optional.empty();
         }
-        return Optional.of(toDomain(entity));
+        return Optional.of(paraDominio(entity));
     }
 }

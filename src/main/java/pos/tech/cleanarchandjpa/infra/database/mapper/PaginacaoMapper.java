@@ -23,7 +23,7 @@ import java.util.List;
 public class PaginacaoMapper {
 
 
-    public static PaginacaoResult<UsuarioResponseDTO> fromDto(PaginacaoResult<Usuario> result) {
+    public static PaginacaoResult<UsuarioResponseDTO> paraResponsePaginacao(PaginacaoResult<Usuario> result) {
         List<UsuarioResponseDTO> dtos = result.content().stream()
                 .map(u -> new UsuarioResponseDTO(u.getId(), u.getNome(), u.getEmail()))
                 .toList();
@@ -39,7 +39,7 @@ public class PaginacaoMapper {
         );
     }
 
-    public static PaginacaoResult<RestauranteResponseDTO> fromDtoR(PaginacaoResult<Restaurante> result) {
+    public static PaginacaoResult<RestauranteResponseDTO> paraResponsePaginacaoRestaurante(PaginacaoResult<Restaurante> result) {
         List<RestauranteResponseDTO> dtos = result.content().stream()
                 .map(u -> new RestauranteResponseDTO(u.getId(), u.getNome(), u.getUsuario().getId()))
                 .toList();
@@ -54,7 +54,7 @@ public class PaginacaoMapper {
         );
     }
 
-    public static PaginacaoResult<CardapioResponseDTO> fromDtoCardapio(PaginacaoResult<Cardapio> result) {
+    public static PaginacaoResult<CardapioResponseDTO> paraResponsePaginacaoCardapio(PaginacaoResult<Cardapio> result) {
         List<CardapioResponseDTO> dtos = result.content().stream()
                 .map(u -> new CardapioResponseDTO(u.getId(), u.getNome(), u.getDescricao()))
                 .toList();
@@ -69,7 +69,7 @@ public class PaginacaoMapper {
         );
     }
 
-    public static PaginacaoResult<Restaurante> fromEntityPage(Page<RestauranteEntity> page) {
+    public static PaginacaoResult<Restaurante> dePageParaPaginacaoRestaurante(Page<RestauranteEntity> page) {
         List<Restaurante> restaurantes = page.getContent()
                 .stream()
                 .map(RestauranteMapper::paraDominio)
@@ -86,7 +86,7 @@ public class PaginacaoMapper {
         );
     }
 
-    public static PaginacaoResult<Cardapio> fromEntityPageCardapio(Page<CardapioEntity> page) {
+    public static PaginacaoResult<Cardapio> dePageParaPaginacaoCardapio(Page<CardapioEntity> page) {
         List<Cardapio> cardapios = page.getContent()
                 .stream()
                 .map(CardapioMapper::paraDominioDeEntidade)
@@ -104,7 +104,7 @@ public class PaginacaoMapper {
     }
 
 
-    public static ParametrosPag fromPageable(Pageable pageable) {
+    public static ParametrosPag dePageableParaParametrosPag(Pageable pageable) {
         String sortDirection = pageable.getSort().isEmpty()
                 ? "ASC"
                 : pageable.getSort().stream()
@@ -127,7 +127,7 @@ public class PaginacaoMapper {
         );
     }
 
-    public static Pageable toPageable(ParametrosPag parametrosPag) {
+    public static Pageable deParametrosPagParaPageable(ParametrosPag parametrosPag) {
         Sort.Direction direction = "DESC".equalsIgnoreCase(parametrosPag.sortDirection())
                 ? Sort.Direction.DESC
                 : Sort.Direction.ASC;
