@@ -5,26 +5,23 @@ import lombok.NoArgsConstructor;
 import pos.tech.cleanarchandjpa.core.domain.Endereco;
 import pos.tech.cleanarchandjpa.core.domain.TipoUsuario;
 import pos.tech.cleanarchandjpa.core.domain.Usuario;
-import pos.tech.cleanarchandjpa.core.dto.UsuarioOutput;
-import pos.tech.cleanarchandjpa.core.exception.UsuarioNaoEncontradoException;
 import pos.tech.cleanarchandjpa.infra.database.entity.EnderecoEntity;
 import pos.tech.cleanarchandjpa.infra.database.entity.TipoUsuarioEntity;
 import pos.tech.cleanarchandjpa.infra.database.entity.UsuarioEntity;
-import pos.tech.cleanarchandjpa.infra.dto.UsuarioRequestDTO;
-import pos.tech.cleanarchandjpa.infra.dto.UsuarioResponseDTO;
-import pos.tech.cleanarchandjpa.infra.dto.UsuarioUpdateDTO;
+import pos.tech.cleanarchandjpa.core.dto.usuario.UsuarioRequestDTO;
+import pos.tech.cleanarchandjpa.core.dto.usuario.UsuarioResponseDTO;
+import pos.tech.cleanarchandjpa.core.dto.usuario.UsuarioUpdateDTO;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UsuarioMapper {
 
     // DTO para Domínio
     public static Usuario toDomainDto(UsuarioRequestDTO dto) {
+       var endereco =  EnderecoMapper.toDomainDto(dto.enderecoDTO());
         return new Usuario(
+               null,
                 dto.nome(),
                 dto.email(),
                 dto.cpf(),
@@ -32,16 +29,18 @@ public class UsuarioMapper {
                 dto.telefone(),
                 dto.login(),
                 dto.senha(),
-                dto.tipoUsuario(),
-                dto.endereco()
-        );
+                endereco
+                );
     }
 
     public static Usuario toDomainDtoUp(UsuarioUpdateDTO dto) {
+        var endereco =  EnderecoMapper.toDomainDto(dto.enderecoDTO());
         return new Usuario(
                 dto.id(),
                 dto.email(),
-                dto.endereco()
+                endereco,
+                dto.login(),
+                dto.senha()
         );
     }
 
@@ -55,22 +54,6 @@ public class UsuarioMapper {
 
     public static Optional<UsuarioResponseDTO> toResponseDtoOptional(Optional<Usuario> domain) {
         return domain.map(UsuarioMapper::toResponseDTO);
-    }
-    //dominio para dto do core
-    public static UsuarioOutput toOutPutDTO(Optional<Usuario> domain) {
-       var dto = toResponseDtoOptional(domain);
-        if (dto.isEmpty()) {
-            throw new UsuarioNaoEncontradoException("Usuário não encontrado");
-        }
-        return new UsuarioOutput(dto.get().getId(), dto.get().getNome(), dto.get().getEmail());
-    }
-
-    public static UsuarioResponseDTO toDTODto(UsuarioOutput output) {
-        return new UsuarioResponseDTO(
-                output.getId(),
-                output.getNome(),
-                output.getEmail()
-        );
     }
 
     // Domínio para Entidade

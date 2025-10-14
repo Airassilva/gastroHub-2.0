@@ -38,4 +38,14 @@ public class EnderecoEntity {
     private Date dataUltimaALteracao;
 
     private String numero;
+
+    public EnderecoEntity(UUID id, String rua, String bairro, String cidade, String estado, String cep, String numero) {
+        this.id = id;
+        this.rua = rua;
+        this.bairro = bairro;
+        this.cidade = cidade;
+        this.estado = estado;
+        this.cep = cep;
+        this.numero = numero;
+    }
 }

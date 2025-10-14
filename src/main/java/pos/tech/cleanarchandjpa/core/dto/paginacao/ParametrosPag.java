@@ -1,4 +1,4 @@
-package pos.tech.cleanarchandjpa.core.domain;
+package pos.tech.cleanarchandjpa.core.dto.paginacao;
 
 public record ParametrosPag(
         int page,

@@ -1,8 +1,8 @@
 package pos.tech.cleanarchandjpa.core.gateway;
 
-import pos.tech.cleanarchandjpa.core.domain.PaginacaoResult;
 import pos.tech.cleanarchandjpa.core.domain.Usuario;
-import pos.tech.cleanarchandjpa.core.domain.ParametrosPag;
+import pos.tech.cleanarchandjpa.core.dto.paginacao.PaginacaoResult;
+import pos.tech.cleanarchandjpa.core.dto.paginacao.ParametrosPag;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -12,7 +12,8 @@ public interface UsuarioGateway {
     Optional<Usuario> buscarUsuarioPorCpf(Usuario usuario);
     Optional<Usuario> buscarUsuarioPorCnpj(Usuario usuario);
     PaginacaoResult<Usuario> buscarTodosOsUsuarios(ParametrosPag parametrosPag);
-
-    Optional<Usuario> buscarUsuario(Usuario usuario);
+    Usuario buscarUsuario(UUID usuario);
     void deletarUsuario(UUID id);
+
+    Usuario salvarUsuario(Usuario usuarioExistente);
 }

@@ -1,7 +1,7 @@
 package pos.tech.cleanarchandjpa.core.usecase.usuario;
 
-import pos.tech.cleanarchandjpa.core.domain.PaginacaoResult;
-import pos.tech.cleanarchandjpa.core.domain.ParametrosPag;
+import pos.tech.cleanarchandjpa.core.dto.paginacao.PaginacaoResult;
+import pos.tech.cleanarchandjpa.core.dto.paginacao.ParametrosPag;
 import pos.tech.cleanarchandjpa.core.domain.Usuario;
 import pos.tech.cleanarchandjpa.core.gateway.UsuarioGateway;
 

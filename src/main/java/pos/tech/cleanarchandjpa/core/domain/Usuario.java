@@ -7,11 +7,12 @@ import pos.tech.cleanarchandjpa.core.exception.BadRequestException;
 
 import java.util.Date;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class Usuario {
+public class Usuario implements PossuiEndereco{
     private UUID id;
     private String nome;
     private String email;
@@ -26,32 +27,70 @@ public class Usuario {
     private TipoUsuario tipoUsuario;
     private Endereco endereco;
 
-    public Usuario(String cpf, String cnpj) {
-        if ((cpf == null || cpf.isBlank()) && (cnpj == null || cnpj.isBlank())) {
+    public Usuario(UUID id, String email, Endereco endereco, String login, String senha) {
+        this.id = id;
+        this.email = validateNotBlank(email, "email");
+        this.endereco = validateNotNull(endereco, "endereço");
+        this.login = validateNotBlank(login, "login");
+        this.senha = validateNotBlank(senha, "senha");
+    }
+
+
+    public void atualizarDadosBasicos(Usuario usuario) {
+        atualizeSePresente(usuario.getEmail(), emailP -> this.email = emailP);
+        atualizeSePresente(usuario.getTelefone(), telefoneP -> this.telefone = telefoneP);
+        atualizeSePresente(usuario.getLogin(), loginP -> this.login = loginP);
+        atualizeSePresente(usuario.getSenha(), senhaP -> this.senha = senhaP);
+        this.dataUltimaAlteracao = new Date();
+    }
+
+    public Usuario(UUID id, String nome, String email, String cpf, String cnpj, String telefone, String login, String senha, Endereco endereco) {
+        this.id = id;
+        this.nome = validateNotBlank(nome, "nome");
+        this.email = validateNotBlank(email, "email");
+        if (isBlankBoth(cpf, cnpj)) {
             throw new BadRequestException("Precisa ser informado um CPF ou CNPJ.");
         }
         this.cpf = cpf;
         this.cnpj = cnpj;
+        this.telefone = validateNotBlank(telefone, "telefone");
+        this.login = validateNotBlank(login, "login");
+        this.senha = validateNotBlank(senha, "senha");
+        this.endereco = validateNotNull(endereco, "endereco");
+        dataUltimaAlteracao = new Date();
     }
 
-    public Usuario(String nome, String email, String cpf, String cnpj, String telefone, String login, String senha, TipoUsuario tipoUsuario, Endereco endereco) {
-        if(email == null || email.isBlank()) {
-            throw new BadRequestException("O campo email é obrigatório.");
+    private static boolean isBlankBoth(String cpf, String cnpj) {
+        return (cpf == null || cpf.isBlank()) && (cnpj == null || cnpj.isBlank());
+    }
+
+    private static String validateNotBlank(String value, String fieldName) {
+        if (value == null || value.isBlank()) {
+            throw new BadRequestException("Precisa ser informado um " + fieldName + ".");
         }
-        this.nome = nome;
-        this.email = email;
-        this.cpf = cpf;
-        this.cnpj = cnpj;
-        this.telefone = telefone;
-        this.login = login;
-        this.senha = senha;
-        this.tipoUsuario = tipoUsuario;
-        this.endereco = endereco;
+        return value;
     }
 
-    public Usuario(UUID id, String email, Endereco endereco) {
-        this.id = id;
-        this.email = email;
-        this.endereco = endereco;
+    private static <T> T validateNotNull(T value, String fieldName) {
+        if (value == null) {
+            throw new BadRequestException("Precisa ser informado um " + fieldName + ".");
+        }
+        return value;
+    }
+
+    private static void atualizeSePresente(String value, Consumer<String> updater) {
+        if (value != null && !value.isBlank()) {
+            updater.accept(value);
+        }
+    }
+
+    @Override
+    public Endereco getEndereco() {
+        return endereco;
+    }
+
+    @Override
+    public void atribuirEndereco(Endereco novoEndereco) {
+        this.endereco = novoEndereco;
     }
 }

@@ -1,12 +1,13 @@
 package pos.tech.cleanarchandjpa.infra.gateway;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import pos.tech.cleanarchandjpa.core.domain.PaginacaoResult;
 import pos.tech.cleanarchandjpa.core.domain.Usuario;
-import pos.tech.cleanarchandjpa.core.domain.ParametrosPag;
+import pos.tech.cleanarchandjpa.core.dto.paginacao.PaginacaoResult;
+import pos.tech.cleanarchandjpa.core.dto.paginacao.ParametrosPag;
 import pos.tech.cleanarchandjpa.core.gateway.UsuarioGateway;
 import pos.tech.cleanarchandjpa.infra.database.entity.UsuarioEntity;
 import pos.tech.cleanarchandjpa.infra.database.mapper.UsuarioMapper;
@@ -74,13 +75,20 @@ public class UsuarioRepositoryGateway implements UsuarioGateway {
     }
 
     @Override
-    public Optional<Usuario> buscarUsuario(Usuario usuario) {
-        return usuarioRepository.findById(usuario.getId())
-                .flatMap(UsuarioMapper::toDomainOptional);
+    public Usuario buscarUsuario(UUID id) {
+        var usuario = usuarioRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Restaurante não encontrado"));
+        return UsuarioMapper.toDomain(usuario);
     }
 
     @Override
     public void deletarUsuario(UUID id) {
         usuarioRepository.deleteById(id);
+    }
+
+    @Override
+    public Usuario salvarUsuario(Usuario usuarioExistente) {
+       UsuarioEntity usuarioEntity = UsuarioMapper.toEntity(usuarioExistente);
+       UsuarioEntity salvo = usuarioRepository.save(usuarioEntity);
+       return UsuarioMapper.toDomain(salvo);
     }
 }

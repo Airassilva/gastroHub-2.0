@@ -1,11 +1,12 @@
 package pos.tech.cleanarchandjpa.core.usecase.usuario;
 
 import pos.tech.cleanarchandjpa.core.domain.Usuario;
-import pos.tech.cleanarchandjpa.core.dto.UsuarioOutput;
 import pos.tech.cleanarchandjpa.core.exception.DadosInvalidosException;
 import pos.tech.cleanarchandjpa.core.exception.UsuarioJaExisteException;
 import pos.tech.cleanarchandjpa.core.gateway.UsuarioGateway;
 import pos.tech.cleanarchandjpa.core.usecase.ValidarDocumentosUseCase;
+
+import java.util.Optional;
 
 
 public class CriarUsuarioUseCase {
@@ -16,13 +17,10 @@ public class CriarUsuarioUseCase {
         this.usuarioGateway = usuarioGateway;
     }
 
-    public UsuarioOutput cadastrarUsuario(Usuario usuario) throws DadosInvalidosException, UsuarioJaExisteException {
+    public Usuario cadastrarUsuario(Usuario usuario) throws DadosInvalidosException, UsuarioJaExisteException {
         ValidarDocumentosUseCase.validarDocumentoObrigatorio(usuario);
         verificarDuplicidade(usuario);
-
-        usuarioGateway.criarUsuario(usuario);
-
-        return new UsuarioOutput(usuario.getId(), usuario.getNome(), usuario.getEmail());
+        return usuarioGateway.criarUsuario(usuario);
     }
 
     private void verificarDuplicidade(Usuario usuario) throws UsuarioJaExisteException {

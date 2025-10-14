@@ -1,4 +1,4 @@
-package pos.tech.cleanarchandjpa.infra.dto;
+package pos.tech.cleanarchandjpa.core.dto;
 
 public record EnderecoDTO(
         String bairro,

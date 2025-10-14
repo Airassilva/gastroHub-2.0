@@ -1,9 +1,9 @@
 package pos.tech.cleanarchandjpa.core.usecase.usuario;
 
 import pos.tech.cleanarchandjpa.core.domain.Usuario;
-import pos.tech.cleanarchandjpa.core.dto.UsuarioOutput;
 import pos.tech.cleanarchandjpa.core.gateway.UsuarioGateway;
-import pos.tech.cleanarchandjpa.infra.database.mapper.UsuarioMapper;
+
+import java.util.UUID;
 
 public class AtualizarUsuarioUseCase {
     private final UsuarioGateway usuarioGateway;
@@ -12,8 +12,9 @@ public class AtualizarUsuarioUseCase {
         this.usuarioGateway = usuarioGateway;
     }
 
-    public UsuarioOutput atualizarUsuario(Usuario usuario) {
-        var usuarioAtualizado = usuarioGateway.buscarUsuario(usuario);
-        return UsuarioMapper.toOutPutDTO(usuarioAtualizado);
+    public Usuario atualizarUsuario(Usuario usuario, UUID id) {
+        Usuario usuarioExistente = usuarioGateway.buscarUsuario(id);
+        usuarioExistente.atualizarDadosBasicos(usuario);
+        return usuarioGateway.salvarUsuario(usuarioExistente);
     }
 }

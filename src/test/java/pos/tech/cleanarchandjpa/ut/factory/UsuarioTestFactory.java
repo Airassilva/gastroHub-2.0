@@ -6,8 +6,8 @@ import pos.tech.cleanarchandjpa.core.domain.Usuario;
 import pos.tech.cleanarchandjpa.infra.database.entity.EnderecoEntity;
 import pos.tech.cleanarchandjpa.infra.database.entity.TipoUsuarioEntity;
 import pos.tech.cleanarchandjpa.infra.database.entity.UsuarioEntity;
-import pos.tech.cleanarchandjpa.infra.dto.UsuarioRequestDTO;
-import pos.tech.cleanarchandjpa.infra.dto.UsuarioResponseDTO;
+import pos.tech.cleanarchandjpa.core.dto.usuario.UsuarioRequestDTO;
+import pos.tech.cleanarchandjpa.core.dto.usuario.UsuarioResponseDTO;
 
 import java.util.ArrayList;
 import java.util.Date;
