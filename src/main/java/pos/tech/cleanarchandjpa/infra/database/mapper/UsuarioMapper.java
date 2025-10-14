@@ -98,6 +98,34 @@ public class UsuarioMapper {
     }
 
 
+    public static Usuario paraDominioDeOptional(Optional<UsuarioEntity> entity) {
+        Endereco enderecoDomain = null;
+
+        if (entity.get().getEndereco() != null && !entity.get().getEndereco().isEmpty()) {
+            var enderecoEntity = entity.get().getEndereco().stream().findFirst().orElse(null);
+            enderecoDomain = new Endereco(
+                    enderecoEntity.getId(),
+                    enderecoEntity.getRua(),
+                    enderecoEntity.getNumero(),
+                    enderecoEntity.getCidade(),
+                    enderecoEntity.getEstado(),
+                    enderecoEntity.getCep()
+            );
+        }
+
+        return new Usuario(
+                entity.get().getId(),
+                entity.get().getNome(),
+                entity.get().getEmail(),
+                entity.get().getCpf(),
+                entity.get().getCnpj(),
+                entity.get().getTelefone(),
+                entity.get().getLogin(),
+                entity.get().getSenha(),
+                enderecoDomain
+        );
+    }
+
     public static Usuario paraDominio(UsuarioEntity entity) {
         if (entity == null) {
             return null;
@@ -136,6 +164,6 @@ public class UsuarioMapper {
         if (entity == null) {
             return Optional.empty();
         }
-        return Optional.of(paraDominio(entity));
+        return Optional.of(paraDominioDeOptional(Optional.of(entity)));
     }
 }

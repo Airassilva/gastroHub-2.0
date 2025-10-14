@@ -4,12 +4,12 @@ import pos.tech.cleanarchandjpa.core.domain.TipoUsuario;
 import pos.tech.cleanarchandjpa.core.domain.Usuario;
 import pos.tech.cleanarchandjpa.core.dto.paginacao.PaginacaoResult;
 import pos.tech.cleanarchandjpa.core.dto.paginacao.ParametrosPag;
-import pos.tech.cleanarchandjpa.core.exception.DadoNaoEncontradoException;
 import pos.tech.cleanarchandjpa.core.gateway.TipoUsuarioGateway;
 import pos.tech.cleanarchandjpa.infra.database.mapper.PaginacaoMapper;
 import pos.tech.cleanarchandjpa.infra.database.mapper.TipoUsuarioMapper;
 import pos.tech.cleanarchandjpa.infra.database.repository.TipoUsuarioRepository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class TipoUsuarioRepositoryGateway implements TipoUsuarioGateway {
@@ -23,7 +23,7 @@ public class TipoUsuarioRepositoryGateway implements TipoUsuarioGateway {
     public TipoUsuario salvar(TipoUsuario tipoUsuario) {
        var entidade = TipoUsuarioMapper.paraEntidade(tipoUsuario);
        var tipoUsuarioSalvo = tipoUsuarioRepository.save(entidade);
-       return TipoUsuarioMapper.paraDominio(tipoUsuarioSalvo);
+       return TipoUsuarioMapper.paraDominioOtional(Optional.of(tipoUsuarioSalvo));
     }
 
     @Override
@@ -35,8 +35,8 @@ public class TipoUsuarioRepositoryGateway implements TipoUsuarioGateway {
 
     @Override
     public TipoUsuario buscarTipoUsuario(UUID id) {
-        var tipoUsuario = tipoUsuarioRepository.findById(id).orElseThrow(() -> new DadoNaoEncontradoException("Tipo usuário não encontrado"));
-        return TipoUsuarioMapper.paraDominio(tipoUsuario);
+        var tipoUsuario = tipoUsuarioRepository.findById(id);
+        return TipoUsuarioMapper.paraDominioOtional(tipoUsuario);
     }
 
     @Override

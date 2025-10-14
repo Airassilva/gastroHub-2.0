@@ -6,20 +6,25 @@ import pos.tech.cleanarchandjpa.core.domain.Endereco;
 import pos.tech.cleanarchandjpa.core.dto.EnderecoDTO;
 import pos.tech.cleanarchandjpa.infra.database.entity.EnderecoEntity;
 
+import java.util.Optional;
+
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EnderecoMapper {
 
-    public static Endereco paraDominio(EnderecoEntity enderecoEntity) {
-        if (enderecoEntity == null) return null;
+    public static Endereco paraDominio(Optional<EnderecoEntity> enderecoEntity) {
+        if (enderecoEntity.isEmpty()) {
+            return null;
+        }
 
+        var entity = enderecoEntity.get();
         return new Endereco(
-                enderecoEntity.getId(),
-                enderecoEntity.getRua(),
-                enderecoEntity.getNumero(),
-                enderecoEntity.getCidade(),
-                enderecoEntity.getEstado(),
-                enderecoEntity.getCep()
+                entity.getId(),
+                entity.getRua(),
+                entity.getNumero(),
+                entity.getCidade(),
+                entity.getEstado(),
+                entity.getCep()
         );
     }
 

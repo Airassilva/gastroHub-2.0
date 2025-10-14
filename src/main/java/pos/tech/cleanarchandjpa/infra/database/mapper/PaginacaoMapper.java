@@ -19,6 +19,7 @@ import pos.tech.cleanarchandjpa.core.dto.usuario.UsuarioResponseDTO;
 import pos.tech.cleanarchandjpa.infra.database.entity.CardapioEntity;
 import pos.tech.cleanarchandjpa.infra.database.entity.RestauranteEntity;
 import pos.tech.cleanarchandjpa.infra.database.entity.TipoUsuarioEntity;
+import pos.tech.cleanarchandjpa.infra.database.entity.UsuarioEntity;
 
 import java.util.List;
 
@@ -171,6 +172,22 @@ public class PaginacaoMapper {
                 usuarios.totalPages(),
                 usuarios.hasNext(),
                 usuarios.hasPrevious()
+        );
+    }
+
+    public static PaginacaoResult<Usuario> dePageParaPaginacaoUsuario(Page<UsuarioEntity> page) {
+        List<Usuario> usuarios = page.getContent()
+                .stream()
+                .map(UsuarioMapper::paraDominio)
+                .toList();
+        return new PaginacaoResult<>(
+                usuarios,
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.hasNext(),
+                page.hasPrevious()
         );
     }
 }

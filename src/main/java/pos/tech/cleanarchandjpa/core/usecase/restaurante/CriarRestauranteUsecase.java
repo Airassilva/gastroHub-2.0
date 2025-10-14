@@ -17,16 +17,7 @@ public class CriarRestauranteUsecase {
 
     public Restaurante criarRestaurante(Restaurante restaurante) {
        var usuarioDono = usuarioGateway.buscarUsuario(restaurante.getUsuario().getId());
-        Restaurante restauranteComUsuario = new Restaurante(
-                restaurante.getId(),
-                restaurante.getNome(),
-                restaurante.getTipoCozinha(),
-                restaurante.getEndereco(),
-                restaurante.getHorariosFunc(),
-                usuarioDono,
-                restaurante.getDataCadastro(),
-                restaurante.getDataAtualizacao()
-        );
+        var restauranteComUsuario = restaurante.comDono(usuarioDono);
         return restauranteGateway.criarRestaurante(restauranteComUsuario);
     }
 }

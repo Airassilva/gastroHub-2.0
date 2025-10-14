@@ -1,19 +1,15 @@
 package pos.tech.cleanarchandjpa.infra.gateway;
 
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import pos.tech.cleanarchandjpa.core.domain.Usuario;
 import pos.tech.cleanarchandjpa.core.dto.paginacao.PaginacaoResult;
 import pos.tech.cleanarchandjpa.core.dto.paginacao.ParametrosPag;
 import pos.tech.cleanarchandjpa.core.gateway.UsuarioGateway;
 import pos.tech.cleanarchandjpa.infra.database.entity.UsuarioEntity;
+import pos.tech.cleanarchandjpa.infra.database.mapper.PaginacaoMapper;
 import pos.tech.cleanarchandjpa.infra.database.mapper.UsuarioMapper;
 import pos.tech.cleanarchandjpa.infra.database.repository.UsuarioRepository;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,7 +24,7 @@ public class UsuarioRepositoryGateway implements UsuarioGateway {
     public Optional<Usuario> criarUsuario(Usuario usuario) {
         var novoUsuario = UsuarioMapper.paraEntidade(usuario);
         var usuarioEncontrado = usuarioRepository.save(novoUsuario);
-        return Optional.ofNullable(UsuarioMapper.paraDominio(usuarioEncontrado));
+        return Optional.ofNullable(UsuarioMapper.paraDominioDeOptional(Optional.of(usuarioEncontrado)));
     }
 
     @Override
@@ -47,37 +43,15 @@ public class UsuarioRepositoryGateway implements UsuarioGateway {
 
     @Override
     public PaginacaoResult<Usuario> buscarTodosOsUsuarios(ParametrosPag parametrosPag) {
-        Sort.Direction direction = "DESC".equalsIgnoreCase(parametrosPag.sortDirection())
-                ? Sort.Direction.DESC
-                : Sort.Direction.ASC;
-
-        Pageable pageable = PageRequest.of(
-                parametrosPag.page(),
-                parametrosPag.pageSize(),
-                Sort.by(direction, parametrosPag.sortBy())
-        );
-
+        var pageable = PaginacaoMapper.deParametrosPagParaPageable(parametrosPag);
         Page<UsuarioEntity> page = usuarioRepository.findAllAtivo(pageable);
-
-        List<Usuario> usuarios = page.getContent().stream()
-                .map(UsuarioMapper::paraDominio)
-                .toList();
-
-        return new PaginacaoResult<>(
-                usuarios,
-                page.getNumber(),
-                page.getSize(),
-                page.getTotalElements(),
-                page.getTotalPages(),
-                page.hasNext(),
-                page.hasPrevious()
-        );
+        return PaginacaoMapper.dePageParaPaginacaoUsuario(page);
     }
 
     @Override
     public Usuario buscarUsuario(UUID id) {
-        var usuario = usuarioRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
-        return UsuarioMapper.paraDominio(usuario);
+        var usuario = usuarioRepository.findById(id);
+        return UsuarioMapper.paraDominioDeOptional(usuario);
     }
 
     @Override
@@ -89,6 +63,6 @@ public class UsuarioRepositoryGateway implements UsuarioGateway {
     public Usuario salvarUsuario(Usuario usuarioExistente) {
        UsuarioEntity usuarioEntity = UsuarioMapper.paraEntidade(usuarioExistente);
        UsuarioEntity salvo = usuarioRepository.save(usuarioEntity);
-       return UsuarioMapper.paraDominio(salvo);
+       return UsuarioMapper.paraDominioDeOptional(Optional.of(salvo));
     }
 }

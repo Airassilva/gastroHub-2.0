@@ -12,6 +12,7 @@ import pos.tech.cleanarchandjpa.infra.database.entity.TipoUsuarioEntity;
 import pos.tech.cleanarchandjpa.infra.database.entity.UsuarioEntity;
 
 import java.util.Collections;
+import java.util.Optional;
 import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -33,11 +34,19 @@ public class TipoUsuarioMapper {
         );
     }
 
+    public static TipoUsuario paraDominioOtional(Optional<TipoUsuarioEntity> tipoUsuarioSalvo) {
+        return new TipoUsuario(
+                tipoUsuarioSalvo.get().getId(),
+                tipoUsuarioSalvo.get().getTipoUsuario(),
+                Collections.singletonList(UsuarioMapper.paraDominioDeOptional(Optional.ofNullable((UsuarioEntity) tipoUsuarioSalvo.get().getUsuarios())))
+        );
+    }
+
     public static TipoUsuario paraDominio(TipoUsuarioEntity tipoUsuarioSalvo) {
         return new TipoUsuario(
                 tipoUsuarioSalvo.getId(),
                 tipoUsuarioSalvo.getTipoUsuario(),
-                Collections.singletonList(UsuarioMapper.paraDominio((UsuarioEntity) tipoUsuarioSalvo.getUsuarios()))
+                Collections.singletonList(UsuarioMapper.paraDominioDeOptional(Optional.ofNullable((UsuarioEntity) tipoUsuarioSalvo.getUsuarios())))
         );
     }
 

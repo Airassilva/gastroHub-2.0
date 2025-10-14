@@ -1,6 +1,7 @@
 package pos.tech.cleanarchandjpa.core.domain;
 
 import lombok.Getter;
+import pos.tech.cleanarchandjpa.core.exception.PermissaoNegadaException;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ public class Restaurante implements PossuiEndereco{
     private String tipoCozinha;
     private Endereco endereco;
     private List<HorarioFuncionamento> horariosFunc;
+    private List<Cardapio> cardapios;
     private Usuario usuario;
     private Date dataCadastro;
     private Date dataAtualizacao;
@@ -75,5 +77,33 @@ public class Restaurante implements PossuiEndereco{
     @Override
     public Endereco getEndereco() {
         return endereco;
+    }
+
+    public Restaurante comDono(Usuario dono) {
+        validarDono(dono);
+
+        return new Restaurante(
+                this.id,
+                this.nome,
+                this.tipoCozinha,
+                this.endereco,
+                this.horariosFunc,
+                dono,
+                this.dataAtualizacao,
+                this.dataCadastro
+        );
+    }
+
+    private void validarDono(Usuario dono) {
+        if (dono == null) {
+            throw new IllegalArgumentException("Dono não pode ser nulo");
+        }
+
+        var ehDono = usuario.getTipoUsuario().getUsuario().stream()
+                .anyMatch(tipo -> tipo.getTipoUsuario().getNomeTipoUsuario().equals("DONO"));
+
+        if (!ehDono) {
+            throw new PermissaoNegadaException("Apenas usuários do tipo DONO podem criar restaurantes");
+        }
     }
 }

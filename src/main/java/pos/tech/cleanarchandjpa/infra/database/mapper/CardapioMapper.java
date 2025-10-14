@@ -9,6 +9,8 @@ import pos.tech.cleanarchandjpa.core.dto.cardapio.CardapioUpdateDTO;
 import pos.tech.cleanarchandjpa.infra.database.entity.CardapioEntity;
 import pos.tech.cleanarchandjpa.infra.database.entity.DisponibilidadeConsumo;
 
+import java.util.Optional;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CardapioMapper {
 
@@ -51,8 +53,21 @@ public class CardapioMapper {
         );
     }
 
+    public static Cardapio paraDominioDeEntidadeOptional(Optional<CardapioEntity> cardapioSalvo) {
+        var restauranteDominio = RestauranteMapper.paraDominioOptional(Optional.ofNullable(cardapioSalvo.get().getRestaurante()));
+        return new Cardapio(
+                cardapioSalvo.get().getId(),
+                cardapioSalvo.get().getNome(),
+                cardapioSalvo.get().getDescricao(),
+                cardapioSalvo.get().getPreco(),
+                pos.tech.cleanarchandjpa.core.domain.DisponibilidadeConsumo.APENAS_NO_RESTAURANTE,
+                cardapioSalvo.get().getCaminhoImagem(),
+                restauranteDominio
+        );
+    }
+
     public static Cardapio paraDominioDeEntidade(CardapioEntity cardapioSalvo) {
-        var restauranteDominio = RestauranteMapper.paraDominio(cardapioSalvo.getRestaurante());
+        var restauranteDominio = RestauranteMapper.paraDominioOptional(Optional.ofNullable(cardapioSalvo.getRestaurante()));
         return new Cardapio(
                 cardapioSalvo.getId(),
                 cardapioSalvo.getNome(),
@@ -63,4 +78,5 @@ public class CardapioMapper {
                 restauranteDominio
         );
     }
+
 }
