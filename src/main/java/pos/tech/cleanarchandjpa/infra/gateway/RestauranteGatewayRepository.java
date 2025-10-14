@@ -27,9 +27,9 @@ public class RestauranteGatewayRepository implements RestauranteGateway {
 
     @Override
     public PaginacaoResult<Restaurante> buscarRestaurantesAbertos(ParametrosPag parametrosPag) {
-        var paginacao = PaginacaoMapper.toPageable(parametrosPag);
+        var paginacao = PaginacaoMapper.deParametrosPagParaPageable(parametrosPag);
         var page = restauranteRepository.findAll(paginacao);
-        return PaginacaoMapper.fromEntityPage(page);
+        return PaginacaoMapper.dePageParaPaginacaoRestaurante(page);
     }
 
     @Override

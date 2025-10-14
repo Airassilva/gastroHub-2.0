@@ -31,7 +31,7 @@ public class UsuarioController {
 
     @PostMapping
     public ResponseEntity<Optional<UsuarioResponseDTO>> cadastrarUsuario(@Valid @RequestBody UsuarioRequestDTO usuarioRequestDTO) throws UsuarioJaExisteException, DadosInvalidosException {
-        var usuario = UsuarioMapper.toDomainDto(usuarioRequestDTO);
+        var usuario = UsuarioMapper.paraDominioDeDto(usuarioRequestDTO);
         var usuarioCadastrado = criarUsuarioUseCase.cadastrarUsuario(usuario);
         var dto = UsuarioMapper.toResponseDtoOptional(Optional.ofNullable(usuarioCadastrado));
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
@@ -39,17 +39,17 @@ public class UsuarioController {
 
     @GetMapping
     public ResponseEntity<PaginacaoResult<UsuarioResponseDTO>> listarTodosOsUsuarios(Pageable pageable) {
-        var parametrosPag = PaginacaoMapper.fromPageable(pageable);
+        var parametrosPag = PaginacaoMapper.dePageableParaParametrosPag(pageable);
         var usuarios = listaDeUsuariosUseCase.listarUsuarios(parametrosPag);
-        var pageDto =  PaginacaoMapper.fromDto(usuarios);
+        var pageDto =  PaginacaoMapper.paraResponsePaginacao(usuarios);
         return ResponseEntity.ok(pageDto);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> atualizarUsuario(@PathVariable("id") UUID id, @Valid @RequestBody UsuarioUpdateDTO usuarioUpdateDTO) {
-        var usuario  = UsuarioMapper.toDomainDtoUp(usuarioUpdateDTO);
+        var usuario  = UsuarioMapper.paraDominioDeDtoUpdate(usuarioUpdateDTO);
         var usuarioAtualizado = atualizarUsuarioComEnderecoUseCase.atualizarUsuarioComEndereco(usuario, id);
-        var response =  UsuarioMapper.toResponseDTO(usuarioAtualizado);
+        var response =  UsuarioMapper.paraResponseDeDomain(usuarioAtualizado);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

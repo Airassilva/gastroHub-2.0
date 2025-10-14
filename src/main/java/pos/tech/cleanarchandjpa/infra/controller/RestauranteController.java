@@ -36,9 +36,9 @@ public class RestauranteController {
 
     @GetMapping
     public ResponseEntity<PaginacaoResult<RestauranteResponseDTO>> listarRestaurantes(Pageable pageable){
-        var parametrosPag = PaginacaoMapper.fromPageable(pageable);
+        var parametrosPag = PaginacaoMapper.dePageableParaParametrosPag(pageable);
         var resturantes = listarRestauranteUsecase.listarRestaurantes(parametrosPag);
-        var dto = PaginacaoMapper.fromDtoR(resturantes);
+        var dto = PaginacaoMapper.paraResponsePaginacaoRestaurante(resturantes);
         return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
 

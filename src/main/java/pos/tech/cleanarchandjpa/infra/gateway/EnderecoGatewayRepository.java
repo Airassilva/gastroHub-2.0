@@ -19,13 +19,13 @@ public class EnderecoGatewayRepository implements EnderecoGateway {
     @Override
     public Endereco buscarEndereco(UUID idEndereco) {
        var enderecoEncontrado = enderecoRepository.findById(idEndereco).orElseThrow(() -> new EntityNotFoundException("Restaurante não encontrado"));
-       return EnderecoMapper.toDomain(enderecoEncontrado);
+       return EnderecoMapper.paraDominio(enderecoEncontrado);
     }
 
     @Override
     public Endereco salvar(Endereco enderecoEncontrado) {
-        var entidade = EnderecoMapper.toEntity(enderecoEncontrado);
+        var entidade = EnderecoMapper.paraEntidade(enderecoEncontrado);
         var enderecoSalvo =  enderecoRepository.save(entidade);
-        return EnderecoMapper.toDomain(enderecoSalvo);
+        return EnderecoMapper.paraDominio(enderecoSalvo);
     }
 }

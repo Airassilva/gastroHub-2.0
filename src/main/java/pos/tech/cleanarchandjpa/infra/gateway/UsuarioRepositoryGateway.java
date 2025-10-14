@@ -26,23 +26,23 @@ public class UsuarioRepositoryGateway implements UsuarioGateway {
 
     @Override
     public Optional<Usuario> criarUsuario(Usuario usuario) {
-        var novoUsuario = UsuarioMapper.toEntity(usuario);
+        var novoUsuario = UsuarioMapper.paraEntidade(usuario);
         var usuarioEncontrado = usuarioRepository.save(novoUsuario);
-        return Optional.ofNullable(UsuarioMapper.toDomain(usuarioEncontrado));
+        return Optional.ofNullable(UsuarioMapper.paraDominio(usuarioEncontrado));
     }
 
     @Override
     public Optional<Usuario> buscarUsuarioPorCpf(Usuario usuario) {
-        var novoUsuario = UsuarioMapper.toEntity(usuario);
+        var novoUsuario = UsuarioMapper.paraEntidade(usuario);
         return usuarioRepository.findByCpf(novoUsuario.getCpf())
-                .flatMap(UsuarioMapper::toDomainOptional);
+                .flatMap(UsuarioMapper::paraDominioOptional);
     }
 
     @Override
     public Optional<Usuario> buscarUsuarioPorCnpj(Usuario usuario) {
-        var novoUsuario = UsuarioMapper.toEntity(usuario);
+        var novoUsuario = UsuarioMapper.paraEntidade(usuario);
         return usuarioRepository.findByCnpj(novoUsuario.getCnpj())
-                .flatMap(UsuarioMapper::toDomainOptional);
+                .flatMap(UsuarioMapper::paraDominioOptional);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class UsuarioRepositoryGateway implements UsuarioGateway {
         Page<UsuarioEntity> page = usuarioRepository.findAllAtivo(pageable);
 
         List<Usuario> usuarios = page.getContent().stream()
-                .map(UsuarioMapper::toDomain)
+                .map(UsuarioMapper::paraDominio)
                 .toList();
 
         return new PaginacaoResult<>(
@@ -77,7 +77,7 @@ public class UsuarioRepositoryGateway implements UsuarioGateway {
     @Override
     public Usuario buscarUsuario(UUID id) {
         var usuario = usuarioRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Restaurante não encontrado"));
-        return UsuarioMapper.toDomain(usuario);
+        return UsuarioMapper.paraDominio(usuario);
     }
 
     @Override
@@ -87,8 +87,8 @@ public class UsuarioRepositoryGateway implements UsuarioGateway {
 
     @Override
     public Usuario salvarUsuario(Usuario usuarioExistente) {
-       UsuarioEntity usuarioEntity = UsuarioMapper.toEntity(usuarioExistente);
+       UsuarioEntity usuarioEntity = UsuarioMapper.paraEntidade(usuarioExistente);
        UsuarioEntity salvo = usuarioRepository.save(usuarioEntity);
-       return UsuarioMapper.toDomain(salvo);
+       return UsuarioMapper.paraDominio(salvo);
     }
 }
