@@ -39,9 +39,9 @@ public class CardapioController {
 
     @GetMapping("/{restauranteId}")
     public ResponseEntity<PaginacaoResult<CardapioResponseDTO>> listarCardapio(@PathVariable UUID restauranteId,Pageable pageable){
-        var parametrosPag = PaginacaoMapper.fromPageable(pageable);
+        var parametrosPag = PaginacaoMapper.dePageableParaParametrosPag(pageable);
         var cardapioPorRestaurante = listarCardapioPeloRestauranteUseCase.listarCardapioPorRestaurante(restauranteId,parametrosPag);
-        var response = PaginacaoMapper.fromDtoCardapio(cardapioPorRestaurante);
+        var response = PaginacaoMapper.paraResponsePaginacaoCardapio(cardapioPorRestaurante);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

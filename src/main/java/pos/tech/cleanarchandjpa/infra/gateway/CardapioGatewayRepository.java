@@ -28,9 +28,9 @@ public class CardapioGatewayRepository implements CardapioGateway {
 
     @Override
     public PaginacaoResult<Cardapio> listarCardapios(Restaurante restaurante, ParametrosPag parametrosPag) {
-        var paginacao = PaginacaoMapper.toPageable(parametrosPag);
+        var paginacao = PaginacaoMapper.deParametrosPagParaPageable(parametrosPag);
         var page = cardapioRepository.findAllByRestauranteId(restaurante.getId(), paginacao);
-        return PaginacaoMapper.fromEntityPageCardapio(page);
+        return PaginacaoMapper.dePageParaPaginacaoCardapio(page);
     }
 
     @Override
