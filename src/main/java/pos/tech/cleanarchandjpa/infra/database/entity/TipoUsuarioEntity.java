@@ -19,13 +19,14 @@ import java.util.UUID;
 public class TipoUsuarioEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.hibernate.annotations.UuidGenerator
     private UUID id;
 
     @NotBlank(message = "O campo informando o tipo do usuário é obrigatório.")
     @Column(unique = true)
     private String tipoUsuario;
 
-    @OneToMany(mappedBy = "tipoUsuario", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "tipoUsuario", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JsonIgnore
     private List<UsuarioEntity> usuarios = new ArrayList<>();
 

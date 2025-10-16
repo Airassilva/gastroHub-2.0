@@ -7,9 +7,6 @@ import pos.tech.cleanarchandjpa.core.dto.cardapio.CardapioRequestDTO;
 import pos.tech.cleanarchandjpa.core.dto.cardapio.CardapioResponseDTO;
 import pos.tech.cleanarchandjpa.core.dto.cardapio.CardapioUpdateDTO;
 import pos.tech.cleanarchandjpa.infra.database.entity.CardapioEntity;
-import pos.tech.cleanarchandjpa.infra.database.entity.DisponibilidadeConsumo;
-
-import java.util.Optional;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CardapioMapper {
@@ -36,7 +33,8 @@ public class CardapioMapper {
         return new CardapioResponseDTO(
                 cardapio.getId(),
                 cardapio.getNome(),
-                cardapio.getDescricao()
+                cardapio.getDescricao(),
+                cardapio.getPreco()
         );
     }
 
@@ -45,35 +43,24 @@ public class CardapioMapper {
         return new CardapioEntity(
                 cardapio.getId(),
                 cardapio.getNome(),
-                cardapio.getPreco(),
                 cardapio.getDescricao(),
-                DisponibilidadeConsumo.APENAS_NO_RESTAURANTE,
+                cardapio.getPreco(),
                 cardapio.getCaminhoImagem(),
                 restauranteEntidade
         );
     }
 
-    public static Cardapio paraDominioDeEntidadeOptional(Optional<CardapioEntity> cardapioSalvo) {
-        var restauranteDominio = RestauranteMapper.paraDominioOptional(Optional.ofNullable(cardapioSalvo.get().getRestaurante()));
-        return new Cardapio(
-                cardapioSalvo.get().getId(),
-                cardapioSalvo.get().getNome(),
-                cardapioSalvo.get().getDescricao(),
-                cardapioSalvo.get().getPreco(),
-                pos.tech.cleanarchandjpa.core.domain.DisponibilidadeConsumo.APENAS_NO_RESTAURANTE,
-                cardapioSalvo.get().getCaminhoImagem(),
-                restauranteDominio
-        );
+    public static Cardapio paraDominioDeEntidadeOptional(CardapioEntity cardapioSalvo) {
+        return paraDominioDeEntidade(cardapioSalvo);
     }
 
     public static Cardapio paraDominioDeEntidade(CardapioEntity cardapioSalvo) {
-        var restauranteDominio = RestauranteMapper.paraDominioOptional(Optional.ofNullable(cardapioSalvo.getRestaurante()));
+        var restauranteDominio = RestauranteMapper.paraDominioOptional(cardapioSalvo.getRestaurante());
         return new Cardapio(
                 cardapioSalvo.getId(),
                 cardapioSalvo.getNome(),
                 cardapioSalvo.getDescricao(),
                 cardapioSalvo.getPreco(),
-                pos.tech.cleanarchandjpa.core.domain.DisponibilidadeConsumo.APENAS_NO_RESTAURANTE,
                 cardapioSalvo.getCaminhoImagem(),
                 restauranteDominio
         );

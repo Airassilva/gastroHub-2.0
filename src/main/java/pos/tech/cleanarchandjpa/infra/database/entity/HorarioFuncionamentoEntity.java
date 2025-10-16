@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.UUID;
 
@@ -17,17 +16,17 @@ import java.util.UUID;
 public class HorarioFuncionamentoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @org.hibernate.annotations.UuidGenerator
     private UUID id;
 
-    @Enumerated(EnumType.STRING)
-    private DayOfWeek diaSemana;
+    private String diaSemana;
 
     private LocalTime abertura;
     private LocalTime fechamento;
     private boolean fechado;
 
-    public HorarioFuncionamentoEntity(DayOfWeek dayOfWeek, LocalTime abertura, LocalTime fechamento) {
-        this.diaSemana = dayOfWeek;
+    public HorarioFuncionamentoEntity(String diaSemana, LocalTime abertura, LocalTime fechamento) {
+        this.diaSemana = diaSemana;
         this.abertura = abertura;
         this.fechamento = fechamento;
     }

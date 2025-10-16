@@ -2,6 +2,7 @@ package pos.tech.cleanarchandjpa.infra.database.mapper;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.Nullable;
 import pos.tech.cleanarchandjpa.core.domain.Endereco;
 import pos.tech.cleanarchandjpa.core.domain.HorarioFuncionamento;
 import pos.tech.cleanarchandjpa.core.domain.Restaurante;
@@ -17,7 +18,6 @@ import pos.tech.cleanarchandjpa.infra.database.entity.RestauranteEntity;
 import pos.tech.cleanarchandjpa.infra.database.entity.UsuarioEntity;
 
 import java.time.LocalTime;
-import java.time.format.DateTimeParseException;
 import java.util.*;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -27,20 +27,16 @@ public class RestauranteMapper {
     public static Restaurante paraDominioDeRequest(RestauranteRequestDTO requestDTO) {
         if (requestDTO == null) return null;
 
-        List<HorarioFuncionamento> horarios = requestDTO.horarios().stream()
-                .map(h -> new HorarioFuncionamento(
-                        h.diaSemana(),
-                        LocalTime.parse(h.abertura()),
-                        LocalTime.parse(h.fechamento())
-                ))
-                .toList();
+        List<HorarioFuncionamento> horarios = RestauranteMapper.toHorarioFuncionamentoList(requestDTO.horarios());
         var endereco =  EnderecoMapper.deDtoParaDominio(requestDTO.endereco());
 
         return new Restaurante(
+                null,
+                requestDTO.nome(),
                 requestDTO.tipoDeCozinha(),
                 endereco,
                 horarios,
-                new Date()
+                null
         );
     }
 
@@ -51,6 +47,9 @@ public class RestauranteMapper {
 
         return dtos.stream()
                 .map(h -> {
+                    if (h.fechado()) {
+                        return new HorarioFuncionamento(h.diaSemana(), null, null);
+                    }
                     try {
                         LocalTime abertura = LocalTime.parse(h.abertura());
                         LocalTime fechamento = LocalTime.parse(h.fechamento());
@@ -64,7 +63,7 @@ public class RestauranteMapper {
                                 abertura,
                                 fechamento
                         );
-                    } catch (DateTimeParseException _) {
+                    } catch (BadRequestException e) {
                         throw new BadRequestException("Formato de hora inválido. Use HH:mm");
                     }
                 })
@@ -78,8 +77,7 @@ public class RestauranteMapper {
         return new Restaurante(
                 updateDTO.tipoDeCozinha(),
                 endereco,
-                horarios,
-                new Date()
+                horarios
         );
     }
 
@@ -97,39 +95,12 @@ public class RestauranteMapper {
         );
     }
 
-    public static Restaurante paraDominioOptional(Optional<RestauranteEntity> entity) {
-        Endereco enderecoDomain = null;
-        if (entity.get().getEndereco() != null) {
-            enderecoDomain = new Endereco(
-                    entity.get().getEndereco().getId(),
-                    entity.get().getEndereco().getRua(),
-                    entity.get().getEndereco().getNumero(),
-                    entity.get().getEndereco().getCidade(),
-                    entity.get().getEndereco().getEstado(),
-                    entity.get().getEndereco().getCep()
-            );
-        }
+    public static Restaurante paraDominioOptional(RestauranteEntity entity) {
+        Endereco enderecoDomain = getEndereco(entity);
 
-        Usuario usuarioDomain = null;
-        if (entity.get().getDono() != null) {
-            usuarioDomain = new Usuario(
-                    entity.get().getDono().getId(),
-                    entity.get().getDono().getNome(),
-                    entity.get().getDono().getEmail(),
-                    entity.get().getDono().getCpf(),
-                    entity.get().getDono().getCnpj(),
-                    entity.get().getDono().getTelefone(),
-                    entity.get().getDono().isAtivo(),
-                    entity.get().getDono().getDataCriacao(),
-                    entity.get().getDono().getDataUltimaAlteracao(),
-                    entity.get().getDono().getLogin(),
-                    entity.get().getDono().getSenha(),
-                    null,
-                    null
-            );
-        }
+        Usuario usuarioDomain = getUsuario(entity);
 
-        List<HorarioFuncionamento> horarios = entity.get().getHorarios().stream()
+        List<HorarioFuncionamento> horarios = entity.getHorarios().stream()
                 .map(h -> new HorarioFuncionamento(
                         h.getDiaSemana(),
                         h.getAbertura(),
@@ -138,24 +109,63 @@ public class RestauranteMapper {
                 .toList();
 
         return new Restaurante(
-                entity.get().getId(),
-                entity.get().getNome(),
-                entity.get().getTipoDeCozinha(),
+                entity.getId(),
+                entity.getNome(),
+                entity.getTipoDeCozinha(),
                 enderecoDomain,
                 horarios,
-                usuarioDomain,
-                entity.get().getDataCriacao(),
-                entity.get().getDataAtualizacao()
+                usuarioDomain
         );
+    }
+
+    @Nullable
+    private static Usuario getUsuario(RestauranteEntity entity) {
+        Usuario usuarioDomain = null;
+        if (entity.getDono() != null) {
+            usuarioDomain = new Usuario(
+                    entity.getDono().getId(),
+                    entity.getDono().getNome(),
+                    entity.getDono().getEmail(),
+                    entity.getDono().getCpf(),
+                    entity.getDono().getCnpj(),
+                    entity.getDono().getTelefone(),
+                    entity.getDono().isAtivo(),
+                    entity.getDono().getDataCriacao(),
+                    entity.getDono().getDataUltimaAlteracao(),
+                    entity.getDono().getLogin(),
+                    entity.getDono().getSenha(),
+                    null,
+                    null
+            );
+        }
+        return usuarioDomain;
+    }
+
+    @Nullable
+    private static Endereco getEndereco(RestauranteEntity entity) {
+        Endereco enderecoDomain = null;
+        if (entity.getEndereco() != null) {
+            enderecoDomain = new Endereco(
+                    entity.getEndereco().getId(),
+                    entity.getEndereco().getRua(),
+                    entity.getEndereco().getNumero(),
+                    entity.getEndereco().getCidade(),
+                    entity.getEndereco().getEstado(),
+                    entity.getEndereco().getCep(),
+                    entity.getEndereco().getBairro(),
+                    entity.getEndereco().getComplemento()
+            );
+        }
+        return enderecoDomain;
     }
 
     public static Restaurante paraDominio(RestauranteEntity entity) {
         var enderecoDomain = entity.getEndereco() != null
-                ? EnderecoMapper.paraDominio(Optional.of(entity.getEndereco()))
+                ? EnderecoMapper.paraDominio(entity.getEndereco())
                 : null;
 
         var usuarioDomain = entity.getDono() != null
-                ? UsuarioMapper.paraDominioDeOptional(Optional.of(entity.getDono()))
+                ? UsuarioMapper.paraDominioDeOptional(entity.getDono())
                 : null;
 
         var horarios = entity.getHorarios().stream()
@@ -172,9 +182,7 @@ public class RestauranteMapper {
                 entity.getTipoDeCozinha(),
                 enderecoDomain,
                 horarios,
-                usuarioDomain,
-                entity.getDataCriacao(),
-                entity.getDataAtualizacao()
+                usuarioDomain
         );
     }
 
@@ -215,6 +223,7 @@ public class RestauranteMapper {
         entity.setRua(endereco.getRua());
         entity.setNumero(endereco.getNumero());
         entity.setCidade(endereco.getCidade());
+        entity.setBairro(endereco.getBairro());
         entity.setEstado(endereco.getEstado());
         entity.setCep(endereco.getCep());
         return entity;
@@ -228,9 +237,10 @@ public class RestauranteMapper {
         entity.setCpf(usuario.getCpf());
         entity.setCnpj(usuario.getCnpj());
         entity.setTelefone(usuario.getTelefone());
-        entity.setAtivo(usuario.isAtivo());
+        entity.setAtivo(true);
         entity.setLogin(usuario.getLogin());
         entity.setSenha(usuario.getSenha());
+        entity.setDataUltimaAlteracao(new Date());
         return entity;
     }
 

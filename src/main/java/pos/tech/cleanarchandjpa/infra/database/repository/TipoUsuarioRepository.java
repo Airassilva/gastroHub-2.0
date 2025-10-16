@@ -8,5 +8,6 @@ import pos.tech.cleanarchandjpa.infra.database.entity.TipoUsuarioEntity;
 import java.util.UUID;
 
 public interface TipoUsuarioRepository extends JpaRepository<TipoUsuarioEntity, UUID> {
-    Page<TipoUsuarioEntity> findAllByUsuarioId(UUID id, Pageable paginacao);
+    Page<TipoUsuarioEntity> findAll(Pageable pageable);
+    TipoUsuarioEntity findByUsuariosId(UUID id);
 }

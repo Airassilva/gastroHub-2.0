@@ -9,7 +9,6 @@ import java.util.UUID;
 public record RestauranteRequestDTO(
         String nome,
         EnderecoDTO endereco,
-        UUID usuarioIdDono,
         List<HorarioFuncionamentoDTO> horarios,
         String tipoDeCozinha) {
 }

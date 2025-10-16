@@ -3,6 +3,7 @@ package pos.tech.cleanarchandjpa.infra.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pos.tech.cleanarchandjpa.core.gateway.RestauranteGateway;
+import pos.tech.cleanarchandjpa.core.gateway.TipoUsuarioGateway;
 import pos.tech.cleanarchandjpa.core.gateway.UsuarioGateway;
 import pos.tech.cleanarchandjpa.core.usecase.AtualizarEnderecoUseCase;
 import pos.tech.cleanarchandjpa.core.usecase.restaurante.*;
@@ -18,8 +19,8 @@ public class RestauranteConfig {
     }
 
     @Bean
-    public CriarRestauranteUsecase criarRestauranteUsecase(RestauranteGateway restauranteGateway, UsuarioGateway usuarioGateway) {
-        return new CriarRestauranteUsecase(restauranteGateway, usuarioGateway);
+    public CriarRestauranteUsecase criarRestauranteUsecase(RestauranteGateway restauranteGateway, UsuarioGateway usuarioGateway, TipoUsuarioGateway tipoUsuarioGateway) {
+        return new CriarRestauranteUsecase(restauranteGateway, usuarioGateway, tipoUsuarioGateway);
     }
 
     @Bean

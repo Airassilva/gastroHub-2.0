@@ -1,0 +1,52 @@
+services:
+  app:
+    image: gastrohub:latest
+    container_name: gastrohub-appV2
+    build: .
+    ports:
+      - "8080:8080"
+      - "5005:5005"
+    env_file:
+      - .env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/gastrohub?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - gastrohub-network
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: gastrohub
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    env_file:
+      - .env
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${DB_USERNAME}", "-p${DB_PASSWORD}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - gastrohub-network
+    restart: unless-stopped
+
+volumes:
+  mysql-data:
+
+networks:
+  gastrohub-network:
+    driver: bridge

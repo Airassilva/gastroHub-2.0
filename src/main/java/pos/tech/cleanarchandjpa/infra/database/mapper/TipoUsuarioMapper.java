@@ -9,11 +9,9 @@ import pos.tech.cleanarchandjpa.core.dto.tipousuario.TipoUsuarioRequestDTO;
 import pos.tech.cleanarchandjpa.core.dto.tipousuario.TipoUsuarioResponseDTO;
 import pos.tech.cleanarchandjpa.core.dto.tipousuario.TipoUsuarioUpdateDTO;
 import pos.tech.cleanarchandjpa.infra.database.entity.TipoUsuarioEntity;
-import pos.tech.cleanarchandjpa.infra.database.entity.UsuarioEntity;
 
-import java.util.Collections;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TipoUsuarioMapper {
@@ -22,7 +20,7 @@ public class TipoUsuarioMapper {
         return new TipoUsuario(
                 null,
                 requestDTO.tipoUsuario(),
-                null
+                new ArrayList<>()
         );
     }
 
@@ -30,15 +28,10 @@ public class TipoUsuarioMapper {
         return new TipoUsuarioEntity(
                 tipoUsuario.getId(),
                 tipoUsuario.getNomeTipoUsuario(),
-                Collections.singletonList(UsuarioMapper.paraEntidade((Usuario) tipoUsuario.getUsuario()))
-        );
-    }
-
-    public static TipoUsuario paraDominioOtional(Optional<TipoUsuarioEntity> tipoUsuarioSalvo) {
-        return new TipoUsuario(
-                tipoUsuarioSalvo.get().getId(),
-                tipoUsuarioSalvo.get().getTipoUsuario(),
-                Collections.singletonList(UsuarioMapper.paraDominioDeOptional(Optional.ofNullable((UsuarioEntity) tipoUsuarioSalvo.get().getUsuarios())))
+                tipoUsuario.getUsuarios()
+                        .stream()
+                        .map(UsuarioMapper::paraEntidade)
+                        .collect(Collectors.toList())
         );
     }
 
@@ -46,22 +39,37 @@ public class TipoUsuarioMapper {
         return new TipoUsuario(
                 tipoUsuarioSalvo.getId(),
                 tipoUsuarioSalvo.getTipoUsuario(),
-                Collections.singletonList(UsuarioMapper.paraDominioDeOptional(Optional.ofNullable((UsuarioEntity) tipoUsuarioSalvo.getUsuarios())))
+                tipoUsuarioSalvo.getUsuarios()
+                        .stream()
+                        .map(UsuarioMapper::paraDominioBasico)
+                        .collect(Collectors.toList())
         );
     }
 
     public static TipoUsuarioResponseDTO paraResponseDeDominio(TipoUsuario tipoUsuarioCriado) {
+        if (tipoUsuarioCriado == null) {
+            return null;
+        }
+
+        List<UUID> idsUsuarios = tipoUsuarioCriado.getUsuarios() != null
+                ? tipoUsuarioCriado.getUsuarios().stream()
+                .filter(Objects::nonNull)
+                .map(Usuario::getId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList())
+                : new ArrayList<>();
+
         return new TipoUsuarioResponseDTO(
                 tipoUsuarioCriado.getId(),
                 tipoUsuarioCriado.getNomeTipoUsuario(),
-                tipoUsuarioCriado.getUsuario()
+                idsUsuarios
         );
     }
 
     public static TipoUsuario paraDominioDeDtoUpdate(UUID id, @Valid TipoUsuarioUpdateDTO updateDTO) {
         return new TipoUsuario(
-                id,
-                updateDTO.getTipoUsuario()
+                        id,
+                        updateDTO.getTipoUsuario()
         );
     }
 }

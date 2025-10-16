@@ -3,6 +3,7 @@ package pos.tech.cleanarchandjpa.infra.database.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
@@ -12,9 +13,11 @@ import java.util.UUID;
 @Table(name = "cardapio")
 @Getter
 @Setter
+@NoArgsConstructor
 public class CardapioEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @org.hibernate.annotations.UuidGenerator
     private UUID id;
 
     @NotBlank(message = "O campo nome é obrigatório.")
@@ -22,21 +25,9 @@ public class CardapioEntity {
 
     private String descricao;
 
-    @NotBlank(message = "O campo preço é obrigatório.")
     private double preco;
 
     private DisponibilidadeConsumo disponibilidade;
-
-    public CardapioEntity(UUID id, String nome, double preco, String descricao, DisponibilidadeConsumo disponibilidade, String caminhoImagem, RestauranteEntity restaurante) {
-        this.id = id;
-        this.nome = nome;
-        this.preco = preco;
-        this.descricao = descricao;
-        this.disponibilidade = disponibilidade;
-        this.caminhoImagem = caminhoImagem;
-        this.dataAtualizacao = new Date();
-        this.restaurante = restaurante;
-    }
 
     private String caminhoImagem;
 
@@ -46,4 +37,15 @@ public class CardapioEntity {
     @ManyToOne
     @JoinColumn(name = "restaurante_id", nullable = false)
     private RestauranteEntity restaurante;
+
+    public CardapioEntity(UUID id, String nome, String descricao, double preco, String caminhoImagem, RestauranteEntity restaurante) {
+        this.id = id;
+        this.nome = nome;
+        this.descricao = descricao;
+        this.preco = preco;
+        this.caminhoImagem = caminhoImagem;
+        this.restaurante = restaurante;
+        this.dataAtualizacao = new Date();
+        this.disponibilidade = DisponibilidadeConsumo.APENAS_NO_RESTAURANTE;
+    }
 }

@@ -3,6 +3,7 @@ package pos.tech.cleanarchandjpa.core.domain;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,13 +12,13 @@ import java.util.UUID;
 public class TipoUsuario {
    private UUID id;
    private String nomeTipoUsuario;
-   private List<Usuario> usuario;
+   private List<Usuario> usuarios = new ArrayList<>();
    private boolean ativo;
 
-    public TipoUsuario(UUID id, String nomeTipoUsuario, List<Usuario> usuario) {
+    public TipoUsuario(UUID id, String nomeTipoUsuario, List<Usuario> usuarios) {
         this.id = id;
         this.nomeTipoUsuario = nomeTipoUsuario;
-        this.usuario = usuario;
+        this.usuarios = usuarios;
         ativo = true;
     }
 
@@ -26,8 +27,10 @@ public class TipoUsuario {
         this.nomeTipoUsuario = tipoUsuario;
     }
 
-    public TipoUsuario atribuirTipoUsuario(Usuario usuario) {
-        return new TipoUsuario(this.id, this.nomeTipoUsuario, (List<Usuario>) usuario);
+    public TipoUsuario adicionarUsuario(Usuario usuario) {
+        this.usuarios.add(usuario);
+        usuario.atribuirTipoUsuario(this);
+        return this;
     }
 
     public TipoUsuario comNovosDados(TipoUsuario novo) {
@@ -36,7 +39,7 @@ public class TipoUsuario {
         return new TipoUsuario(
                 this.id,
                 atualizarCampo(novo.nomeTipoUsuario, this.nomeTipoUsuario),
-                novo.usuario != null ? novo.usuario : this.usuario
+                novo.usuarios != null ? novo.usuarios : this.usuarios
         );
     }
 

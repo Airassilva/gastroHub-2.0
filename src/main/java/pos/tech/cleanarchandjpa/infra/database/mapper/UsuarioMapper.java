@@ -3,9 +3,9 @@ package pos.tech.cleanarchandjpa.infra.database.mapper;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import pos.tech.cleanarchandjpa.core.domain.Endereco;
+import pos.tech.cleanarchandjpa.core.domain.TipoUsuario;
 import pos.tech.cleanarchandjpa.core.domain.Usuario;
 import pos.tech.cleanarchandjpa.infra.database.entity.EnderecoEntity;
-import pos.tech.cleanarchandjpa.infra.database.entity.TipoUsuarioEntity;
 import pos.tech.cleanarchandjpa.infra.database.entity.UsuarioEntity;
 import pos.tech.cleanarchandjpa.core.dto.usuario.UsuarioRequestDTO;
 import pos.tech.cleanarchandjpa.core.dto.usuario.UsuarioResponseDTO;
@@ -21,9 +21,9 @@ public class UsuarioMapper {
         return new Usuario(
                null,
                 dto.nome(),
-                dto.email(),
                 dto.cpf(),
                 dto.cnpj(),
+                dto.email(),
                 dto.telefone(),
                 dto.login(),
                 dto.senha(),
@@ -49,82 +49,116 @@ public class UsuarioMapper {
                 domain.getEmail());
     }
 
-    public static Optional<UsuarioResponseDTO> toResponseDtoOptional(Optional<Usuario> domain) {
-        return domain.map(UsuarioMapper::paraResponseDeDomain);
-    }
-
     public static UsuarioEntity paraEntidade(Usuario usuario) {
         if (usuario == null) {
             return null;
         }
-
         UsuarioEntity entity = new UsuarioEntity();
         entity.setId(usuario.getId());
         entity.setNome(usuario.getNome());
-        entity.setEmail(usuario.getEmail());
         entity.setCpf(usuario.getCpf());
         entity.setCnpj(usuario.getCnpj());
+        entity.setEmail(usuario.getEmail());
         entity.setTelefone(usuario.getTelefone());
         entity.setLogin(usuario.getLogin());
         entity.setSenha(usuario.getSenha());
-        entity.setAtivo(usuario.isAtivo());
+        if (usuario.getTipoUsuario() != null) {
+            var tipoUsuarioEntity = TipoUsuarioMapper.paraEntidade(usuario.getTipoUsuario());
+            entity.setTipoUsuario(tipoUsuarioEntity);
+        }
+        entity.setAtivo(true);
         entity.setDataCriacao(usuario.getDataCriacao() != null ? usuario.getDataCriacao() : new Date());
         entity.setDataUltimaAlteracao(new Date());
 
-        // TipoUsuario para TipoUsuarioEntity
-        if (usuario.getTipoUsuario() != null) {
-            TipoUsuarioEntity tipoEntity = new TipoUsuarioEntity();
-            tipoEntity.setId(usuario.getTipoUsuario().getId());
-            tipoEntity.setTipoUsuario(usuario.getTipoUsuario().getNomeTipoUsuario());
-            entity.setTipoUsuarioEntity(tipoEntity);
-        }
+        List<UsuarioEntity> usuarios = new ArrayList<>();
+        usuarios.add(entity);
 
-        // Endereco para EnderecoEntity
         if (usuario.getEndereco() != null) {
             Endereco endereco = usuario.getEndereco();
             EnderecoEntity enderecoEntity = new EnderecoEntity();
-            enderecoEntity.setId(endereco.getId());
-            enderecoEntity.setRua(endereco.getRua());
-            enderecoEntity.setNumero(endereco.getNumero());
-            enderecoEntity.setCidade(endereco.getCidade());
-            enderecoEntity.setEstado(endereco.getEstado());
-            enderecoEntity.setCep(endereco.getCep());
-            entity.setEndereco(List.of(enderecoEntity));
+                enderecoEntity.setId(endereco.getId());
+                enderecoEntity.setRua(endereco.getRua());
+                enderecoEntity.setBairro(endereco.getBairro());
+                enderecoEntity.setCidade(endereco.getCidade());
+                enderecoEntity.setEstado(endereco.getEstado());
+                enderecoEntity.setCep(endereco.getCep());
+                enderecoEntity.setNumero(endereco.getNumero());
+                enderecoEntity.setComplemento(endereco.getComplemento());
+                enderecoEntity.setDataUltimaALteracao(endereco.getDataUltimaAlteracao());
+                enderecoEntity.setUsuarios(usuarios);
+                entity.setEndereco(List.of(enderecoEntity));
         } else {
             entity.setEndereco(Collections.emptyList());
         }
-
         return entity;
     }
 
-
-    public static Usuario paraDominioDeOptional(Optional<UsuarioEntity> entity) {
-        Endereco enderecoDomain = null;
-
-        if (entity.get().getEndereco() != null && !entity.get().getEndereco().isEmpty()) {
-            var enderecoEntity = entity.get().getEndereco().stream().findFirst().orElse(null);
-            enderecoDomain = new Endereco(
-                    enderecoEntity.getId(),
-                    enderecoEntity.getRua(),
-                    enderecoEntity.getNumero(),
-                    enderecoEntity.getCidade(),
-                    enderecoEntity.getEstado(),
-                    enderecoEntity.getCep()
-            );
-        }
-
+    public static Usuario paraDominioBasico(UsuarioEntity entity) {
         return new Usuario(
-                entity.get().getId(),
-                entity.get().getNome(),
-                entity.get().getEmail(),
-                entity.get().getCpf(),
-                entity.get().getCnpj(),
-                entity.get().getTelefone(),
-                entity.get().getLogin(),
-                entity.get().getSenha(),
-                enderecoDomain
+                entity.getId(),
+                entity.getEmail(),
+                entity.getSenha(),
+                entity.getLogin(),
+                entity.getCpf(),
+                entity.getCnpj()
         );
     }
+
+    public static Usuario paraDominioDeOptional(UsuarioEntity entity) {
+        if (entity == null) return null;
+
+        Endereco enderecoDomain = null;
+        if (entity.getEndereco() != null && !entity.getEndereco().isEmpty()) {
+            var enderecoEntity = entity.getEndereco().stream()
+                    .filter(Objects::nonNull)
+                    .findFirst()
+                    .orElse(null);
+
+            if (enderecoEntity != null) {
+                enderecoDomain = new Endereco(
+                        enderecoEntity.getId(),
+                        enderecoEntity.getRua(),
+                        enderecoEntity.getNumero(),
+                        enderecoEntity.getCidade(),
+                        enderecoEntity.getEstado(),
+                        enderecoEntity.getCep(),
+                        enderecoEntity.getBairro(),
+                        enderecoEntity.getComplemento()
+                );
+            }
+        }
+
+        TipoUsuario tipoUsuarioDomain = entity.getTipoUsuario() != null
+                ? TipoUsuarioMapper.paraDominio(entity.getTipoUsuario())
+                : null;
+
+        if (tipoUsuarioDomain != null) {
+            return new Usuario(
+                    entity.getId(),
+                    entity.getEmail(),
+                    enderecoDomain,
+                    entity.getLogin(),
+                    entity.getSenha(),
+                    tipoUsuarioDomain,
+                    entity.getCpf(),
+                    entity.getCnpj(),
+                    entity.getTelefone()
+            );
+        } else {
+            return new Usuario(
+                    entity.getId(),
+                    entity.getNome(),
+                    entity.getCpf(),
+                    entity.getCnpj(),
+                    entity.getEmail(),
+                    entity.getTelefone(),
+                    entity.getLogin(),
+                    entity.getSenha(),
+                    enderecoDomain
+            );
+        }
+    }
+
 
     public static Usuario paraDominio(UsuarioEntity entity) {
         if (entity == null) {
@@ -135,35 +169,28 @@ public class UsuarioMapper {
 
         if (entity.getEndereco() != null && !entity.getEndereco().isEmpty()) {
             var enderecoEntity = entity.getEndereco().stream().findFirst().orElse(null);
-            if (enderecoEntity != null) {
-                enderecoDomain = new Endereco(
-                        enderecoEntity.getId(),
-                        enderecoEntity.getRua(),
-                        enderecoEntity.getNumero(),
-                        enderecoEntity.getCidade(),
-                        enderecoEntity.getEstado(),
-                        enderecoEntity.getCep()
-                );
-            }
+            enderecoDomain = new Endereco(
+                    enderecoEntity.getId(),
+                    enderecoEntity.getRua(),
+                    enderecoEntity.getNumero(),
+                    enderecoEntity.getCidade(),
+                    enderecoEntity.getEstado(),
+                    enderecoEntity.getCep(),
+                    enderecoEntity.getBairro(),
+                    enderecoEntity.getComplemento()
+            );
         }
 
         return new Usuario(
                 entity.getId(),
                 entity.getNome(),
-                entity.getEmail(),
                 entity.getCpf(),
                 entity.getCnpj(),
+                entity.getEmail(),
                 entity.getTelefone(),
                 entity.getLogin(),
                 entity.getSenha(),
                 enderecoDomain
         );
-    }
-
-    public static Optional<Usuario> paraDominioOptional(UsuarioEntity entity) {
-        if (entity == null) {
-            return Optional.empty();
-        }
-        return Optional.of(paraDominioDeOptional(Optional.of(entity)));
     }
 }

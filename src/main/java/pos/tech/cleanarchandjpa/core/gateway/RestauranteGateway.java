@@ -11,6 +11,5 @@ public interface RestauranteGateway {
     PaginacaoResult<Restaurante> buscarRestaurantesAbertos(ParametrosPag parametrosPag);
     Restaurante buscarRestaurantePeloId(UUID id);
     Restaurante salvar(Restaurante restauranteAchado);
-
     void deletar(UUID id);
 }

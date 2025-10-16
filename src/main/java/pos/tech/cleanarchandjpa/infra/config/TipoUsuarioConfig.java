@@ -29,8 +29,8 @@ public class TipoUsuarioConfig {
     }
 
     @Bean
-    public ListarTiposDeUsuarioUseCase listarTiposDeUsuarioUseCase(TipoUsuarioGateway tipoUsuarioGateway, UsuarioGateway usuarioGateway) {
-        return new ListarTiposDeUsuarioUseCase(tipoUsuarioGateway, usuarioGateway);
+    public ListarTiposDeUsuarioUseCase listarTiposDeUsuarioUseCase(TipoUsuarioGateway tipoUsuarioGateway) {
+        return new ListarTiposDeUsuarioUseCase(tipoUsuarioGateway);
     }
 
     @Bean

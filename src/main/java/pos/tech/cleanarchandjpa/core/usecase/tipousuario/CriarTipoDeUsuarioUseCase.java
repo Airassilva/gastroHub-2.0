@@ -1,6 +1,7 @@
 package pos.tech.cleanarchandjpa.core.usecase.tipousuario;
 
 import pos.tech.cleanarchandjpa.core.domain.TipoUsuario;
+import pos.tech.cleanarchandjpa.core.exception.UsuarioNaoEncontradoException;
 import pos.tech.cleanarchandjpa.core.gateway.TipoUsuarioGateway;
 import pos.tech.cleanarchandjpa.core.gateway.UsuarioGateway;
 
@@ -16,9 +17,15 @@ public class CriarTipoDeUsuarioUseCase {
         this.usuarioGateway = usuarioGateway;
     }
 
-    public TipoUsuario criarUsuario(UUID usuarioId, TipoUsuario dominio) {
+    public TipoUsuario criarUsuario(UUID usuarioId, TipoUsuario tipoUsuario) {
         var usuario = usuarioGateway.buscarUsuario(usuarioId);
-        var tipoUsuario = dominio.atribuirTipoUsuario(usuario);
-        return tipoUsuarioGateway.salvar(tipoUsuario);
+        if (usuario == null) {
+            throw new UsuarioNaoEncontradoException();
+        }
+        var dominio = tipoUsuarioGateway.salvar(tipoUsuario);
+        usuario.atribuirTipoUsuario(dominio);
+        usuarioGateway.salvarUsuario(usuario);
+        dominio.adicionarUsuario(usuario);
+        return dominio;
     }
 }

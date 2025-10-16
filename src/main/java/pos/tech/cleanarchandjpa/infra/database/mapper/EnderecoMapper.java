@@ -3,28 +3,31 @@ package pos.tech.cleanarchandjpa.infra.database.mapper;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import pos.tech.cleanarchandjpa.core.domain.Endereco;
+import pos.tech.cleanarchandjpa.core.domain.Usuario;
 import pos.tech.cleanarchandjpa.core.dto.EnderecoDTO;
 import pos.tech.cleanarchandjpa.infra.database.entity.EnderecoEntity;
+import pos.tech.cleanarchandjpa.infra.database.entity.UsuarioEntity;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EnderecoMapper {
 
-    public static Endereco paraDominio(Optional<EnderecoEntity> enderecoEntity) {
-        if (enderecoEntity.isEmpty()) {
+    public static Endereco paraDominio(EnderecoEntity enderecoEntity) {
+        if (enderecoEntity == null) {
             return null;
         }
-
-        var entity = enderecoEntity.get();
         return new Endereco(
-                entity.getId(),
-                entity.getRua(),
-                entity.getNumero(),
-                entity.getCidade(),
-                entity.getEstado(),
-                entity.getCep()
+                enderecoEntity.getId(),
+                enderecoEntity.getRua(),
+                enderecoEntity.getNumero(),
+                enderecoEntity.getCidade(),
+                enderecoEntity.getEstado(),
+                enderecoEntity.getCep(),
+                enderecoEntity.getBairro(),
+                enderecoEntity.getComplemento()
         );
     }
 
@@ -34,24 +37,30 @@ public class EnderecoMapper {
 
         return new Endereco(
                 null,
-                enderecoDTO.cep(),
                 enderecoDTO.rua(),
                 enderecoDTO.numero(),
                 enderecoDTO.cidade(),
-                enderecoDTO.estado()
+                enderecoDTO.estado(),
+                enderecoDTO.cep(),
+                enderecoDTO.bairro(),
+                enderecoDTO.complemento()
         );
     }
 
     public static EnderecoEntity paraEntidade(Endereco endereco) {
-        if (endereco == null) return null;
+        var usuario = UsuarioMapper.paraEntidade((Usuario) endereco.getUsuarios());
+        List<UsuarioEntity> usuarios = new ArrayList<>();
+        usuarios.add(usuario);
         return new EnderecoEntity(
                 endereco.getId(),
                 endereco.getRua(),
-                endereco.getBairro(),
+                endereco.getNumero(),
                 endereco.getCidade(),
                 endereco.getEstado(),
                 endereco.getCep(),
-                endereco.getNumero()
+                endereco.getBairro(),
+                endereco.getComplemento(),
+                usuarios
         );
     }
 }

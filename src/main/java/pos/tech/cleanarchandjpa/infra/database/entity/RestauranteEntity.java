@@ -1,14 +1,14 @@
 package pos.tech.cleanarchandjpa.infra.database.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.DayOfWeek;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,6 +23,7 @@ public class RestauranteEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @org.hibernate.annotations.UuidGenerator
     private UUID id;
 
     @NotBlank(message = "O campo nome é obrigatório.")
@@ -48,14 +49,4 @@ public class RestauranteEntity {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "restaurante_id")
     private List<HorarioFuncionamentoEntity> horarios = new ArrayList<>();
-
-    public boolean estaAberto() {
-        LocalDateTime agora = LocalDateTime.now();
-        DayOfWeek diaAtual = agora.getDayOfWeek();
-        LocalTime horaAtual = agora.toLocalTime();
-
-        return horarios.stream()
-                .filter(h -> h.getDiaSemana() == diaAtual)
-                .anyMatch(h -> h.estaAberto(horaAtual));
-    }
 }

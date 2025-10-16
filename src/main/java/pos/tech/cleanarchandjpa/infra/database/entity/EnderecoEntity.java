@@ -1,12 +1,15 @@
 package pos.tech.cleanarchandjpa.infra.database.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -17,6 +20,7 @@ import java.util.UUID;
 public class EnderecoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.hibernate.annotations.UuidGenerator
     private UUID id;
 
     @NotBlank(message = "O campo rua é obrigatório.")
@@ -39,13 +43,21 @@ public class EnderecoEntity {
 
     private String numero;
 
-    public EnderecoEntity(UUID id, String rua, String bairro, String cidade, String estado, String cep, String numero) {
+    private String complemento;
+
+    @ManyToMany(mappedBy = "endereco")
+    @JsonIgnore
+    private List<UsuarioEntity> usuarios = new ArrayList<>();
+
+    public EnderecoEntity(UUID id, String rua, String bairro, String cidade, String estado, String cep, String numero, String complemento, List<UsuarioEntity> usuarios) {
         this.id = id;
         this.rua = rua;
-        this.bairro = bairro;
+        this.numero = numero;
         this.cidade = cidade;
         this.estado = estado;
         this.cep = cep;
-        this.numero = numero;
+        this.bairro = bairro;
+        this.complemento = complemento;
+        this.usuarios = usuarios;
     }
 }

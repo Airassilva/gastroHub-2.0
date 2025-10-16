@@ -6,9 +6,6 @@ import pos.tech.cleanarchandjpa.core.exception.UsuarioJaExisteException;
 import pos.tech.cleanarchandjpa.core.gateway.UsuarioGateway;
 import pos.tech.cleanarchandjpa.core.usecase.ValidarDocumentosUseCase;
 
-import java.util.Optional;
-
-
 public class CriarUsuarioUseCase {
 
     private final UsuarioGateway usuarioGateway;
@@ -25,12 +22,12 @@ public class CriarUsuarioUseCase {
 
     private void verificarDuplicidade(Usuario usuario) throws UsuarioJaExisteException {
         if (usuario.getCpf() != null && !usuario.getCpf().isBlank()
-                && usuarioGateway.buscarUsuarioPorCpf(usuario).isPresent()) {
+                && usuarioGateway.buscarUsuarioPorCpf(usuario) != null) {
                 throw new UsuarioJaExisteException("Usuário com este CPF já cadastrado.");
         }
 
         if (usuario.getCnpj() != null && !usuario.getCnpj().isBlank()
-                && usuarioGateway.buscarUsuarioPorCnpj(usuario).isPresent()) {
+                && usuarioGateway.buscarUsuarioPorCnpj(usuario) != null) {
                 throw new UsuarioJaExisteException("Usuário com este CNPJ já cadastrado.");
         }
     }

@@ -3,9 +3,7 @@ package pos.tech.cleanarchandjpa.core.domain;
 import lombok.Getter;
 import pos.tech.cleanarchandjpa.core.exception.PermissaoNegadaException;
 
-import java.time.DayOfWeek;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -23,32 +21,33 @@ public class Restaurante implements PossuiEndereco{
     private Date dataCadastro;
     private Date dataAtualizacao;
 
-    public Restaurante(UUID uuid, String nome, String tipoCozinha, Endereco endereco, List<HorarioFuncionamento> horarios, Usuario usuario, Date dataCadastro, Date dataAtualizacao) {
-        this.id = uuid;
+    public Restaurante(UUID id, String nome, String tipoCozinha, Endereco endereco, List<HorarioFuncionamento> horarios, Usuario usuario) {
+        this.id = id;
         this.nome = nome;
         this.tipoCozinha = tipoCozinha;
         this.endereco = endereco;
         this.horariosFunc = horarios;
         this.usuario = usuario;
-        this.dataCadastro = dataCadastro;
-        this.dataAtualizacao = dataAtualizacao;
+        this.dataCadastro = new Date();
+        this.dataAtualizacao = new Date();
     }
 
-    public Restaurante(String tipoCozinha, Endereco endereco, List<HorarioFuncionamento> horariosFunc, Date dataAtualizacao) {
+    public Restaurante(UUID id, String nome, String tipoCozinha, Endereco endereco, List<HorarioFuncionamento> horariosFunc, List<Cardapio> cardapios, Usuario usuario) {
+        this.id = id;
+        this.nome = nome;
         this.tipoCozinha = tipoCozinha;
         this.endereco = endereco;
         this.horariosFunc = horariosFunc;
-        this.dataAtualizacao = dataAtualizacao;
+        this.cardapios = cardapios;
+        this.usuario = usuario;
+        this.dataAtualizacao = new Date();
     }
 
-    public boolean estaAberto() {
-        LocalDateTime agora = LocalDateTime.now();
-        DayOfWeek diaAtual = agora.getDayOfWeek();
-        LocalTime horaAtual = agora.toLocalTime();
-
-        return horariosFunc.stream()
-                .filter(h -> h.getDiaSemana() == diaAtual)
-                .anyMatch(h -> h.estaAberto(horaAtual));
+    public Restaurante(String tipoCozinha, Endereco endereco, List<HorarioFuncionamento> horarios) {
+        this.tipoCozinha = tipoCozinha;
+        this.endereco = endereco;
+        this.horariosFunc = horarios;
+        this.dataAtualizacao = new Date();
     }
 
     public void atualizarDados(Restaurante restaurante) {
@@ -79,8 +78,8 @@ public class Restaurante implements PossuiEndereco{
         return endereco;
     }
 
-    public Restaurante comDono(Usuario dono) {
-        validarDono(dono);
+    public Restaurante comDono(TipoUsuario tipoUsuario, Usuario dono) {
+        validarDono(tipoUsuario);
 
         return new Restaurante(
                 this.id,
@@ -88,21 +87,24 @@ public class Restaurante implements PossuiEndereco{
                 this.tipoCozinha,
                 this.endereco,
                 this.horariosFunc,
-                dono,
-                this.dataAtualizacao,
-                this.dataCadastro
+                dono
         );
     }
 
-    private void validarDono(Usuario dono) {
+    public void adicionarCardapio(Cardapio novoCardapio) {
+        if (this.cardapios == null) {
+            this.cardapios = new ArrayList<>();
+        }
+        this.cardapios.add(novoCardapio);
+        this.dataAtualizacao = new Date();
+    }
+
+
+    private void validarDono(TipoUsuario dono) {
         if (dono == null) {
             throw new IllegalArgumentException("Dono não pode ser nulo");
         }
-
-        var ehDono = usuario.getTipoUsuario().getUsuario().stream()
-                .anyMatch(tipo -> tipo.getTipoUsuario().getNomeTipoUsuario().equals("DONO"));
-
-        if (!ehDono) {
+        if (!dono.getNomeTipoUsuario().equalsIgnoreCase("dono")) {
             throw new PermissaoNegadaException("Apenas usuários do tipo DONO podem criar restaurantes");
         }
     }

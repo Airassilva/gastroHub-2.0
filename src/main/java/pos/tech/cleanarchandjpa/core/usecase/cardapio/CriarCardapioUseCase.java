@@ -18,6 +18,7 @@ public class CriarCardapioUseCase {
     public Cardapio criarCardapio(Cardapio cardapio, UUID restauranteId) {
         var restaurante = restauranteGateway.buscarRestaurantePeloId(restauranteId);
         var cardapioComRestaurante = cardapio.comRestaurante(restaurante);
+        restaurante.adicionarCardapio(cardapioComRestaurante);
         return cardapioGateway.salvarCardapio(cardapioComRestaurante);
     }
 }

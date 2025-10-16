@@ -1,6 +1,8 @@
 package pos.tech.cleanarchandjpa.infra.gateway;
 
 import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import pos.tech.cleanarchandjpa.core.domain.Usuario;
 import pos.tech.cleanarchandjpa.core.dto.paginacao.PaginacaoResult;
 import pos.tech.cleanarchandjpa.core.dto.paginacao.ParametrosPag;
@@ -10,9 +12,11 @@ import pos.tech.cleanarchandjpa.infra.database.mapper.PaginacaoMapper;
 import pos.tech.cleanarchandjpa.infra.database.mapper.UsuarioMapper;
 import pos.tech.cleanarchandjpa.infra.database.repository.UsuarioRepository;
 
-import java.util.Optional;
 import java.util.UUID;
 
+
+@Repository
+@Transactional(readOnly = true)
 public class UsuarioRepositoryGateway implements UsuarioGateway {
     private final UsuarioRepository usuarioRepository;
 
@@ -21,37 +25,40 @@ public class UsuarioRepositoryGateway implements UsuarioGateway {
     }
 
     @Override
-    public Optional<Usuario> criarUsuario(Usuario usuario) {
-        var novoUsuario = UsuarioMapper.paraEntidade(usuario);
-        var usuarioEncontrado = usuarioRepository.save(novoUsuario);
-        return Optional.ofNullable(UsuarioMapper.paraDominioDeOptional(Optional.of(usuarioEncontrado)));
+    public Usuario criarUsuario(Usuario usuario) {
+        var entidade = UsuarioMapper.paraEntidade(usuario);
+        var usuarioSalvo = usuarioRepository.save(entidade);
+        return UsuarioMapper.paraDominioDeOptional(usuarioSalvo);
     }
 
     @Override
-    public Optional<Usuario> buscarUsuarioPorCpf(Usuario usuario) {
+    public Usuario buscarUsuarioPorCpf(Usuario usuario) {
         var novoUsuario = UsuarioMapper.paraEntidade(usuario);
         return usuarioRepository.findByCpf(novoUsuario.getCpf())
-                .flatMap(UsuarioMapper::paraDominioOptional);
+                        .map(UsuarioMapper::paraDominio)
+                        .orElse(null);
     }
 
     @Override
-    public Optional<Usuario> buscarUsuarioPorCnpj(Usuario usuario) {
+    public Usuario buscarUsuarioPorCnpj(Usuario usuario) {
         var novoUsuario = UsuarioMapper.paraEntidade(usuario);
         return usuarioRepository.findByCnpj(novoUsuario.getCnpj())
-                .flatMap(UsuarioMapper::paraDominioOptional);
+                        .map(UsuarioMapper::paraDominio)
+                        .orElse(null);
     }
 
     @Override
     public PaginacaoResult<Usuario> buscarTodosOsUsuarios(ParametrosPag parametrosPag) {
         var pageable = PaginacaoMapper.deParametrosPagParaPageable(parametrosPag);
-        Page<UsuarioEntity> page = usuarioRepository.findAllAtivo(pageable);
+        Page<UsuarioEntity> page = usuarioRepository.findAllByAtivoTrue(pageable);
         return PaginacaoMapper.dePageParaPaginacaoUsuario(page);
     }
 
     @Override
     public Usuario buscarUsuario(UUID id) {
-        var usuario = usuarioRepository.findById(id);
-        return UsuarioMapper.paraDominioDeOptional(usuario);
+         return usuarioRepository.findById(id)
+                 .map(UsuarioMapper::paraDominioDeOptional)
+                 .orElse(null);
     }
 
     @Override
@@ -63,6 +70,6 @@ public class UsuarioRepositoryGateway implements UsuarioGateway {
     public Usuario salvarUsuario(Usuario usuarioExistente) {
        UsuarioEntity usuarioEntity = UsuarioMapper.paraEntidade(usuarioExistente);
        UsuarioEntity salvo = usuarioRepository.save(usuarioEntity);
-       return UsuarioMapper.paraDominioDeOptional(Optional.of(salvo));
+       return UsuarioMapper.paraDominioDeOptional(salvo);
     }
 }

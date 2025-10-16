@@ -16,15 +16,15 @@ public class Cardapio {
     private Date dataAtualizacao;
     private Restaurante restaurante;
 
-    public Cardapio(UUID id, String nome, String descricao, double preco, DisponibilidadeConsumo disponibilidade, String caminhoImagem, Restaurante novoRestaurante) {
+    public Cardapio(UUID id, String nome, String descricao, double preco, String caminhoImagem, Restaurante novoRestaurante) {
         this.id = id;
         this.nome = nome;
         this.descricao = descricao;
         this.preco = preco;
-        this.disponibilidade = disponibilidade;
         this.caminhoImagem = caminhoImagem;
-        this.dataAtualizacao = new Date();
         this.restaurante = novoRestaurante;
+        this.dataAtualizacao = new Date();
+        this.disponibilidade = DisponibilidadeConsumo.APENAS_NO_RESTAURANTE;
     }
 
     public Cardapio(String nome, String descricao, double preco, String caminhoFoto) {
@@ -32,11 +32,17 @@ public class Cardapio {
         this.descricao = descricao;
         this.preco = preco;
         this.caminhoImagem = caminhoFoto;
+        this.dataAtualizacao = new Date();
+        this.disponibilidade = DisponibilidadeConsumo.APENAS_NO_RESTAURANTE;
     }
 
     public Cardapio comRestaurante(Restaurante novoRestaurante) {
-        return new Cardapio(this.id, this.nome, this.descricao, this.preco,
-                this.disponibilidade, this.caminhoImagem,
+        return new Cardapio(
+                this.id,
+                this.nome,
+                this.descricao,
+                this.preco,
+                this.caminhoImagem,
                 novoRestaurante);
     }
 
@@ -45,16 +51,15 @@ public class Cardapio {
 
         return new Cardapio(
                 this.id,
-                atualizarCampo(novo.nome, this.nome),
-                atualizarCampo(novo.descricao, this.descricao),
+                atualizaSePresente(novo.nome, this.nome),
+                atualizaSePresente(novo.descricao, this.descricao),
                 novo.preco > 0 ? novo.preco : this.preco,
-                novo.disponibilidade != null ? novo.disponibilidade : this.disponibilidade,
-                atualizarCampo(novo.caminhoImagem, this.caminhoImagem),
+                atualizaSePresente(novo.caminhoImagem, this.caminhoImagem),
                 this.restaurante
         );
     }
 
-    private String atualizarCampo(String novoValor, String valorAtual) {
+    private String atualizaSePresente(String novoValor, String valorAtual) {
         return (novoValor != null && !novoValor.isBlank()) ? novoValor : valorAtual;
     }
 

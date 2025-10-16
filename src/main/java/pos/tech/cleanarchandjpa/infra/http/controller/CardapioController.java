@@ -1,10 +1,11 @@
-package pos.tech.cleanarchandjpa.infra.controller;
+package pos.tech.cleanarchandjpa.infra.http.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pos.tech.cleanarchandjpa.core.dto.cardapio.CardapioRequestDTO;
 import pos.tech.cleanarchandjpa.core.dto.cardapio.CardapioResponseDTO;
@@ -22,6 +23,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/cardapio")
+@Validated
 public class CardapioController {
 
     private final CriarCardapioUseCase criarCardapioUseCase;

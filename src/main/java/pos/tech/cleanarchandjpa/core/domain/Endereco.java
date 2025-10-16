@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -18,22 +19,18 @@ public class Endereco {
     private String cep;
     private String complemento;
     private Date dataUltimaAlteracao;
+    private List<Usuario> usuarios;
 
-    public Endereco(UUID id, String rua, String numero, String cidade, String estado,String cep) {
+    public Endereco(UUID id, String rua, String numero, String cidade, String estado,String cep, String bairro, String complemento) {
         this.id = id;
         this.rua = rua;
         this.numero = numero;
         this.cidade = cidade;
         this.estado = estado;
         this.cep = cep;
-    }
-
-    public Endereco( String cep, String rua, String numero, String cidade, String estado) {
-        this.cep = cep;
-        this.rua = rua;
-        this.numero = numero;
-        this.cidade = cidade;
-        this.estado = estado;
+        this.bairro = bairro;
+        this.complemento = complemento;
+        this.dataUltimaAlteracao = new Date();
     }
 
     public void atualizarEndereco(Endereco endereco) {
@@ -59,6 +56,7 @@ public class Endereco {
         validarCampoObrigatorio(endereco.getEstado(), "Estado");
         validarCampoObrigatorio(endereco.getCep(), "CEP");
         validarFormatoCep(endereco.getCep());
+        validarCampoObrigatorio(endereco.getBairro(), "Bairro");
     }
 
     private void validarCampoObrigatorio(String campo, String nomeCampo) {
@@ -75,5 +73,21 @@ public class Endereco {
 
     private String atualizarCampoOpcional(String novoValor, String valorAtual) {
         return (novoValor != null && !novoValor.isBlank()) ? novoValor : valorAtual;
+    }
+
+    public void criarEndereco(Endereco endereco) {
+        validarEndereco(endereco);
+        this.rua = endereco.getRua();
+        this.cidade = endereco.getCidade();
+        this.estado = endereco.getEstado();
+        this.cep = endereco.getCep();
+        this.bairro = endereco.getBairro();
+        this.numero = endereco.getNumero();
+        this.complemento = endereco.getComplemento();
+        this.dataUltimaAlteracao = new Date();
+    }
+
+    public void atribuirUsuario(Usuario usuario) {
+        this.usuarios.add(usuario);
     }
 }

@@ -1,7 +1,8 @@
 package pos.tech.cleanarchandjpa.infra.gateway;
 
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import pos.tech.cleanarchandjpa.core.domain.TipoUsuario;
-import pos.tech.cleanarchandjpa.core.domain.Usuario;
 import pos.tech.cleanarchandjpa.core.dto.paginacao.PaginacaoResult;
 import pos.tech.cleanarchandjpa.core.dto.paginacao.ParametrosPag;
 import pos.tech.cleanarchandjpa.core.gateway.TipoUsuarioGateway;
@@ -9,9 +10,10 @@ import pos.tech.cleanarchandjpa.infra.database.mapper.PaginacaoMapper;
 import pos.tech.cleanarchandjpa.infra.database.mapper.TipoUsuarioMapper;
 import pos.tech.cleanarchandjpa.infra.database.repository.TipoUsuarioRepository;
 
-import java.util.Optional;
 import java.util.UUID;
 
+@Repository
+@Transactional
 public class TipoUsuarioRepositoryGateway implements TipoUsuarioGateway {
     private final TipoUsuarioRepository tipoUsuarioRepository;
 
@@ -23,20 +25,20 @@ public class TipoUsuarioRepositoryGateway implements TipoUsuarioGateway {
     public TipoUsuario salvar(TipoUsuario tipoUsuario) {
        var entidade = TipoUsuarioMapper.paraEntidade(tipoUsuario);
        var tipoUsuarioSalvo = tipoUsuarioRepository.save(entidade);
-       return TipoUsuarioMapper.paraDominioOtional(Optional.of(tipoUsuarioSalvo));
+       return TipoUsuarioMapper.paraDominio(tipoUsuarioSalvo);
     }
 
     @Override
-    public PaginacaoResult<TipoUsuario> listarTiposDeUsuarios(Usuario usuario, ParametrosPag parametrosPag) {
+    public PaginacaoResult<TipoUsuario> listarTiposDeUsuarios(ParametrosPag parametrosPag) {
         var paginacao = PaginacaoMapper.deParametrosPagParaPageable(parametrosPag);
-        var page = tipoUsuarioRepository.findAllByUsuarioId(usuario.getId(), paginacao);
+        var page = tipoUsuarioRepository.findAll(paginacao);
         return PaginacaoMapper.dePageParaPaginacaoTipoUsuario(page);
     }
 
     @Override
     public TipoUsuario buscarTipoUsuario(UUID id) {
-        var tipoUsuario = tipoUsuarioRepository.findById(id);
-        return TipoUsuarioMapper.paraDominioOtional(tipoUsuario);
+       var entidade = tipoUsuarioRepository.findByUsuariosId(id);
+       return TipoUsuarioMapper.paraDominio(entidade);
     }
 
     @Override

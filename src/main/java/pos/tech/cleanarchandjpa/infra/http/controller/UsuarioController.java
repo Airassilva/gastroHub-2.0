@@ -1,10 +1,11 @@
-package pos.tech.cleanarchandjpa.infra.controller;
+package pos.tech.cleanarchandjpa.infra.http.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pos.tech.cleanarchandjpa.core.dto.paginacao.PaginacaoResult;
 import pos.tech.cleanarchandjpa.core.dto.usuario.UsuarioRequestDTO;
@@ -16,12 +17,12 @@ import pos.tech.cleanarchandjpa.core.usecase.usuario.*;
 import pos.tech.cleanarchandjpa.infra.database.mapper.PaginacaoMapper;
 import pos.tech.cleanarchandjpa.infra.database.mapper.UsuarioMapper;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/usuario")
+@Validated
 public class UsuarioController {
 
     private final CriarUsuarioUseCase criarUsuarioUseCase;
@@ -30,10 +31,10 @@ public class UsuarioController {
     private final DeletarUsuarioUseCase deletarUsuarioUseCase;
 
     @PostMapping
-    public ResponseEntity<Optional<UsuarioResponseDTO>> cadastrarUsuario(@Valid @RequestBody UsuarioRequestDTO usuarioRequestDTO) throws UsuarioJaExisteException, DadosInvalidosException {
+    public ResponseEntity<UsuarioResponseDTO> cadastrarUsuario(@Valid @RequestBody UsuarioRequestDTO usuarioRequestDTO) throws UsuarioJaExisteException, DadosInvalidosException {
         var usuario = UsuarioMapper.paraDominioDeDto(usuarioRequestDTO);
         var usuarioCadastrado = criarUsuarioUseCase.cadastrarUsuario(usuario);
-        var dto = UsuarioMapper.toResponseDtoOptional(Optional.ofNullable(usuarioCadastrado));
+        var dto = UsuarioMapper.paraResponseDeDomain(usuarioCadastrado);
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 

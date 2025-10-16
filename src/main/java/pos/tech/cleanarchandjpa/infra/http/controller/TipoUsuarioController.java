@@ -1,10 +1,11 @@
-package pos.tech.cleanarchandjpa.infra.controller;
+package pos.tech.cleanarchandjpa.infra.http.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pos.tech.cleanarchandjpa.core.dto.paginacao.PaginacaoResult;
 import pos.tech.cleanarchandjpa.core.dto.tipousuario.TipoUsuarioRequestDTO;
@@ -22,6 +23,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/tipoUsuario")
+@Validated
 public class TipoUsuarioController {
 
     private final CriarTipoDeUsuarioUseCase criarTipoDeUsuarioUseCase;
@@ -37,10 +39,10 @@ public class TipoUsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping("/{usuarioId}")
-    public ResponseEntity<PaginacaoResult<TipoUsuarioResponseDTO>> listarTipoUsuario(@PathVariable UUID usuarioId, Pageable pageable){
+    @GetMapping
+    public ResponseEntity<PaginacaoResult<TipoUsuarioResponseDTO>> listarTipoUsuario(Pageable pageable){
         var parametrosPag = PaginacaoMapper.dePageableParaParametrosPag(pageable);
-        var usuarios = listarTiposDeUsuarioUseCase.listarTipoDeUsuarios(usuarioId,parametrosPag);
+        var usuarios = listarTiposDeUsuarioUseCase.listarTipoDeUsuarios(parametrosPag);
         var response = PaginacaoMapper.paraResponsePaginacaoTipoUsuario(usuarios);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

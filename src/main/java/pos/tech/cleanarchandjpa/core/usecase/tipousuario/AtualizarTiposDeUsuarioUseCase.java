@@ -14,7 +14,7 @@ public class AtualizarTiposDeUsuarioUseCase {
 
     public TipoUsuario atualizarUsuario(TipoUsuario dominio, UUID id) {
         var tipoUsuario =  tipoUsuarioGateway.buscarTipoUsuario(id);
-        tipoUsuario.comNovosDados(dominio);
+        tipoUsuario = tipoUsuario.comNovosDados(dominio);
         return tipoUsuarioGateway.salvar(tipoUsuario);
     }
 }

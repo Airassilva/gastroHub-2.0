@@ -1,5 +1,7 @@
 package pos.tech.cleanarchandjpa.infra.gateway;
 
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import pos.tech.cleanarchandjpa.core.domain.Cardapio;
 import pos.tech.cleanarchandjpa.core.domain.Restaurante;
 import pos.tech.cleanarchandjpa.core.dto.paginacao.PaginacaoResult;
@@ -9,9 +11,10 @@ import pos.tech.cleanarchandjpa.infra.database.mapper.CardapioMapper;
 import pos.tech.cleanarchandjpa.infra.database.mapper.PaginacaoMapper;
 import pos.tech.cleanarchandjpa.infra.database.repository.CardapioRepository;
 
-import java.util.Optional;
 import java.util.UUID;
 
+@Repository
+@Transactional
 public class CardapioGatewayRepository implements CardapioGateway {
     private final CardapioRepository cardapioRepository;
 
@@ -23,7 +26,7 @@ public class CardapioGatewayRepository implements CardapioGateway {
     public Cardapio salvarCardapio(Cardapio cardapio) {
         var entidade = CardapioMapper.paraEntidade(cardapio);
         var cardapioSalvo = cardapioRepository.save(entidade);
-        return CardapioMapper.paraDominioDeEntidadeOptional(Optional.of(cardapioSalvo));
+        return CardapioMapper.paraDominioDeEntidadeOptional(cardapioSalvo);
     }
 
     @Override
@@ -35,8 +38,9 @@ public class CardapioGatewayRepository implements CardapioGateway {
 
     @Override
     public Cardapio buscarCardapioPeloId(UUID id) {
-        var cardapios = cardapioRepository.findById(id);
-        return CardapioMapper.paraDominioDeEntidadeOptional(cardapios);
+        return cardapioRepository.findById(id)
+                .map(CardapioMapper::paraDominioDeEntidade)
+                .orElse(null);
     }
 
     @Override

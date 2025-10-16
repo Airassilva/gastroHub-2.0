@@ -60,7 +60,7 @@ public class PaginacaoMapper {
 
     public static PaginacaoResult<CardapioResponseDTO> paraResponsePaginacaoCardapio(PaginacaoResult<Cardapio> result) {
         List<CardapioResponseDTO> dtos = result.content().stream()
-                .map(u -> new CardapioResponseDTO(u.getId(), u.getNome(), u.getDescricao()))
+                .map(u -> new CardapioResponseDTO(u.getId(), u.getNome(), u.getDescricao(), u.getPreco()))
                 .toList();
         return new PaginacaoResult<>(
                 dtos,
@@ -161,11 +161,13 @@ public class PaginacaoMapper {
     }
 
     public static PaginacaoResult<TipoUsuarioResponseDTO> paraResponsePaginacaoTipoUsuario(PaginacaoResult<TipoUsuario> usuarios) {
-        List<TipoUsuarioResponseDTO> dtos = usuarios.content().stream()
-                .map(u -> new TipoUsuarioResponseDTO(u.getId(), u.getNomeTipoUsuario(), u.getUsuario()))
+        List<TipoUsuarioResponseDTO> tipoUsuarios = usuarios.content()
+                .stream()
+                .map(TipoUsuarioMapper::paraResponseDeDominio)
                 .toList();
+
         return new PaginacaoResult<>(
-                dtos,
+                tipoUsuarios,
                 usuarios.page(),
                 usuarios.pageSize(),
                 usuarios.totalElements(),
@@ -174,6 +176,7 @@ public class PaginacaoMapper {
                 usuarios.hasPrevious()
         );
     }
+
 
     public static PaginacaoResult<Usuario> dePageParaPaginacaoUsuario(Page<UsuarioEntity> page) {
         List<Usuario> usuarios = page.getContent()

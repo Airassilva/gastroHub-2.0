@@ -22,6 +22,7 @@ import java.util.UUID;
 public class UsuarioEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.hibernate.annotations.UuidGenerator
     private UUID id;
 
     @NotBlank(message = "O campo nome é obrigatório.")
@@ -55,15 +56,12 @@ public class UsuarioEntity {
     @NotBlank(message = "O campo senha é obrigatório.")
     private String senha;
 
-    @ManyToOne
-    @JoinColumn(name = "tipo_usuario_id", nullable = false)
-    private TipoUsuarioEntity tipoUsuarioEntity;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tipo_usuario_id")
+    private TipoUsuarioEntity tipoUsuario;
 
     @OneToMany(mappedBy = "dono")
     private List<RestauranteEntity> restaurantesComoDono = new ArrayList<>();
-
-    @ManyToMany(mappedBy = "clientes")
-    private List<RestauranteEntity> restaurantesComoCliente = new ArrayList<>();
 
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(
@@ -72,4 +70,5 @@ public class UsuarioEntity {
             inverseJoinColumns = @JoinColumn(name = "endereco_id")
     )
     private List<EnderecoEntity> endereco = new ArrayList<>();
+
 }
