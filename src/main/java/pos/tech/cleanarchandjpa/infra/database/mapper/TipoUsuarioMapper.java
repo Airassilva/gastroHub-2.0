@@ -11,7 +11,7 @@ import pos.tech.cleanarchandjpa.core.dto.tipousuario.TipoUsuarioUpdateDTO;
 import pos.tech.cleanarchandjpa.infra.database.entity.TipoUsuarioEntity;
 
 import java.util.*;
-import java.util.stream.Collectors;
+import static java.util.stream.Collectors.toList;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TipoUsuarioMapper {
@@ -19,7 +19,7 @@ public class TipoUsuarioMapper {
     public static TipoUsuario paraDominioDeDto(@Valid TipoUsuarioRequestDTO requestDTO) {
         return new TipoUsuario(
                 null,
-                requestDTO.tipoUsuario(),
+                requestDTO.getTipoUsuario(),
                 new ArrayList<>()
         );
     }
@@ -31,7 +31,7 @@ public class TipoUsuarioMapper {
                 tipoUsuario.getUsuarios()
                         .stream()
                         .map(UsuarioMapper::paraEntidade)
-                        .collect(Collectors.toList())
+                        .collect(toList())
         );
     }
 
@@ -42,7 +42,7 @@ public class TipoUsuarioMapper {
                 tipoUsuarioSalvo.getUsuarios()
                         .stream()
                         .map(UsuarioMapper::paraDominioBasico)
-                        .collect(Collectors.toList())
+                        .collect(toList())
         );
     }
 
@@ -56,7 +56,7 @@ public class TipoUsuarioMapper {
                 .filter(Objects::nonNull)
                 .map(Usuario::getId)
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList())
+                .collect(toList())
                 : new ArrayList<>();
 
         return new TipoUsuarioResponseDTO(

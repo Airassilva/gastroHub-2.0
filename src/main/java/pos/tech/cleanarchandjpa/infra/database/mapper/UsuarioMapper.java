@@ -17,28 +17,28 @@ import java.util.*;
 public class UsuarioMapper {
 
     public static Usuario paraDominioDeDto(UsuarioRequestDTO dto) {
-       var endereco =  EnderecoMapper.deDtoParaDominio(dto.enderecoDTO());
+       var endereco =  EnderecoMapper.deDtoParaDominio(dto.getEnderecoDTO());
         return new Usuario(
                null,
-                dto.nome(),
-                dto.cpf(),
-                dto.cnpj(),
-                dto.email(),
-                dto.telefone(),
-                dto.login(),
-                dto.senha(),
+                dto.getNome(),
+                dto.getCpf(),
+                dto.getCnpj(),
+                dto.getEmail(),
+                dto.getTelefone(),
+                dto.getLogin(),
+                dto.getSenha(),
                 endereco
                 );
     }
 
     public static Usuario paraDominioDeDtoUpdate(UsuarioUpdateDTO dto) {
-        var endereco =  EnderecoMapper.deDtoParaDominio(dto.enderecoDTO());
+        var endereco =  EnderecoMapper.deDtoParaDominio(dto.getEnderecoDTO());
         return new Usuario(
                 null,
-                dto.email(),
+                dto.getEmail(),
                 endereco,
-                dto.login(),
-                dto.senha()
+                dto.getLogin(),
+                dto.getSenha()
         );
     }
 
@@ -169,16 +169,19 @@ public class UsuarioMapper {
 
         if (entity.getEndereco() != null && !entity.getEndereco().isEmpty()) {
             var enderecoEntity = entity.getEndereco().stream().findFirst().orElse(null);
-            enderecoDomain = new Endereco(
-                    enderecoEntity.getId(),
-                    enderecoEntity.getRua(),
-                    enderecoEntity.getNumero(),
-                    enderecoEntity.getCidade(),
-                    enderecoEntity.getEstado(),
-                    enderecoEntity.getCep(),
-                    enderecoEntity.getBairro(),
-                    enderecoEntity.getComplemento()
-            );
+
+            if (enderecoEntity != null) {
+                enderecoDomain = new Endereco(
+                        enderecoEntity.getId(),
+                        enderecoEntity.getRua(),
+                        enderecoEntity.getNumero(),
+                        enderecoEntity.getCidade(),
+                        enderecoEntity.getEstado(),
+                        enderecoEntity.getCep(),
+                        enderecoEntity.getBairro(),
+                        enderecoEntity.getComplemento()
+                );
+            }
         }
 
         return new Usuario(

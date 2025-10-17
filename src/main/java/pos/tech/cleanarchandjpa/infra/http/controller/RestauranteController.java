@@ -12,7 +12,6 @@ import pos.tech.cleanarchandjpa.core.dto.restaurante.RestauranteRequestDTO;
 import pos.tech.cleanarchandjpa.core.dto.restaurante.RestauranteResponseDTO;
 import pos.tech.cleanarchandjpa.core.dto.restaurante.RestauranteUpdateDTO;
 import pos.tech.cleanarchandjpa.core.usecase.restaurante.*;
-import pos.tech.cleanarchandjpa.core.usecase.tipousuario.ListarTiposDeUsuarioUseCase;
 import pos.tech.cleanarchandjpa.infra.database.mapper.PaginacaoMapper;
 import pos.tech.cleanarchandjpa.infra.database.mapper.RestauranteMapper;
 

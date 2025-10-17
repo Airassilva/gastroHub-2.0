@@ -22,10 +22,10 @@ public class CardapioMapper {
 
     public static Cardapio paraDominioDeDtoUpdate(CardapioUpdateDTO dto) {
         return new Cardapio(
-                dto.nome(),
-                dto.descricao(),
-                dto.preco(),
-                dto.caminhoFoto()
+                dto.getNome(),
+                dto.getDescricao(),
+                dto.getPreco(),
+                dto.getCaminhoFoto()
         );
     }
 

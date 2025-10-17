@@ -23,17 +23,16 @@ import java.util.*;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RestauranteMapper {
 
-
     public static Restaurante paraDominioDeRequest(RestauranteRequestDTO requestDTO) {
         if (requestDTO == null) return null;
 
-        List<HorarioFuncionamento> horarios = RestauranteMapper.toHorarioFuncionamentoList(requestDTO.horarios());
-        var endereco =  EnderecoMapper.deDtoParaDominio(requestDTO.endereco());
+        List<HorarioFuncionamento> horarios = RestauranteMapper.toHorarioFuncionamentoList(requestDTO.getHorarios());
+        var endereco =  EnderecoMapper.deDtoParaDominio(requestDTO.getEndereco());
 
         return new Restaurante(
                 null,
-                requestDTO.nome(),
-                requestDTO.tipoDeCozinha(),
+                requestDTO.getNome(),
+                requestDTO.getTipoDeCozinha(),
                 endereco,
                 horarios,
                 null
@@ -47,19 +46,19 @@ public class RestauranteMapper {
 
         return dtos.stream()
                 .map(h -> {
-                    if (h.fechado()) {
-                        return new HorarioFuncionamento(h.diaSemana(), null, null);
+                    if (h.isFechado()) {
+                        return new HorarioFuncionamento(h.getDiaSemana(), null, null);
                     }
                     try {
-                        LocalTime abertura = LocalTime.parse(h.abertura());
-                        LocalTime fechamento = LocalTime.parse(h.fechamento());
+                        LocalTime abertura = LocalTime.parse(h.getAbertura());
+                        LocalTime fechamento = LocalTime.parse(h.getFechamento());
 
                         if (!abertura.isBefore(fechamento)) {
                             throw new BadRequestException("Hora de abertura deve ser antes do fechamento");
                         }
 
                         return new HorarioFuncionamento(
-                                h.diaSemana(),
+                                h.getDiaSemana(),
                                 abertura,
                                 fechamento
                         );
@@ -71,11 +70,11 @@ public class RestauranteMapper {
     }
 
     public static Restaurante paraDominioDeDTO(RestauranteUpdateDTO updateDTO) {
-        var endereco = EnderecoMapper.deDtoParaDominio(updateDTO.enderecoDTO());
-        var horarios = RestauranteMapper.toHorarioFuncionamentoList(updateDTO.horarioFuncionamentoDTO());
+        var endereco = EnderecoMapper.deDtoParaDominio(updateDTO.getEnderecoDTO());
+        var horarios = RestauranteMapper.toHorarioFuncionamentoList(updateDTO.getHorarioFuncionamentoDTO());
 
         return new Restaurante(
-                updateDTO.tipoDeCozinha(),
+                updateDTO.getTipoDeCozinha(),
                 endereco,
                 horarios
         );

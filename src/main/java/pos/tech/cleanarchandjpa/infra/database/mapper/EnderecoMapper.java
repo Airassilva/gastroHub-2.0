@@ -37,13 +37,13 @@ public class EnderecoMapper {
 
         return new Endereco(
                 null,
-                enderecoDTO.rua(),
-                enderecoDTO.numero(),
-                enderecoDTO.cidade(),
-                enderecoDTO.estado(),
-                enderecoDTO.cep(),
-                enderecoDTO.bairro(),
-                enderecoDTO.complemento()
+                enderecoDTO.getRua(),
+                enderecoDTO.getNumero(),
+                enderecoDTO.getCidade(),
+                enderecoDTO.getEstado(),
+                enderecoDTO.getCep(),
+                enderecoDTO.getBairro(),
+                enderecoDTO.getComplemento()
         );
     }
 
