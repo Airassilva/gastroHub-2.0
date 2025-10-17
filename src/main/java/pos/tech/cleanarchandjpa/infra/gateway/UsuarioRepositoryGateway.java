@@ -14,9 +14,8 @@ import pos.tech.cleanarchandjpa.infra.database.repository.UsuarioRepository;
 
 import java.util.UUID;
 
-
 @Repository
-@Transactional(readOnly = true)
+@Transactional
 public class UsuarioRepositoryGateway implements UsuarioGateway {
     private final UsuarioRepository usuarioRepository;
 

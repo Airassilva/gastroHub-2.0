@@ -47,10 +47,10 @@ public class TipoUsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<TipoUsuarioResponseDTO> atualizarTipoUsuario(@PathVariable("id") UUID id, @Valid @RequestBody TipoUsuarioUpdateDTO updateDTO){
-        var dominio = TipoUsuarioMapper.paraDominioDeDtoUpdate(id,updateDTO);
-        var tipoUsuario = atualizarTiposDeUsuarioUseCase.atualizarUsuario(dominio, id);
+    @PutMapping("/{usuarioId}")
+    public ResponseEntity<TipoUsuarioResponseDTO> atualizarTipoUsuario(@PathVariable("usuarioId") UUID usuarioId, @Valid @RequestBody TipoUsuarioUpdateDTO updateDTO){
+        var dominio = TipoUsuarioMapper.paraDominioDeDtoUpdate(usuarioId,updateDTO);
+        var tipoUsuario = atualizarTiposDeUsuarioUseCase.atualizarUsuario(dominio, usuarioId);
         var response = TipoUsuarioMapper.paraResponseDeDominio(tipoUsuario);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

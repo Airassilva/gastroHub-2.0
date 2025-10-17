@@ -11,4 +11,6 @@ public interface TipoUsuarioGateway {
     PaginacaoResult<TipoUsuario> listarTiposDeUsuarios(ParametrosPag parametrosPag);
     TipoUsuario buscarTipoUsuario(UUID id);
     void deletarUsuario(UUID id);
+
+    TipoUsuario buscarPeloId(UUID id);
 }

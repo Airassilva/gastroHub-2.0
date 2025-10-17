@@ -13,7 +13,7 @@ public class DeletarTipoDeUsuarioUseCase {
     }
 
     public void deletarTipoUsuario(UUID id) {
-        var tipoUsuario = tipoUsuarioGateway.buscarTipoUsuario(id);
+        var tipoUsuario = tipoUsuarioGateway.buscarPeloId(id);
         if (tipoUsuario == null) {
             throw new TipoUsuarioNaoEncontradoException();
         }

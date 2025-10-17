@@ -18,7 +18,7 @@ public class AtualizarTiposDeUsuarioUseCase {
         if(tipoUsuario == null){
             throw new TipoUsuarioNaoEncontradoException();
         }
-        tipoUsuario = tipoUsuario.comNovosDados(dominio);
-        return tipoUsuarioGateway.salvar(tipoUsuario);
+        var tipoUsuarioNovo = tipoUsuario.comNovosDados(dominio);
+        return tipoUsuarioGateway.salvar(tipoUsuarioNovo);
     }
 }

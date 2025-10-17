@@ -8,6 +8,7 @@ import pos.tech.cleanarchandjpa.core.domain.Usuario;
 import pos.tech.cleanarchandjpa.core.dto.tipousuario.TipoUsuarioRequestDTO;
 import pos.tech.cleanarchandjpa.core.dto.tipousuario.TipoUsuarioResponseDTO;
 import pos.tech.cleanarchandjpa.core.dto.tipousuario.TipoUsuarioUpdateDTO;
+import pos.tech.cleanarchandjpa.core.exception.TipoUsuarioNaoEncontradoException;
 import pos.tech.cleanarchandjpa.infra.database.entity.TipoUsuarioEntity;
 
 import java.util.*;
@@ -36,6 +37,9 @@ public class TipoUsuarioMapper {
     }
 
     public static TipoUsuario paraDominio(TipoUsuarioEntity tipoUsuarioSalvo) {
+        if (tipoUsuarioSalvo == null) {
+            return null;
+        }
         return new TipoUsuario(
                 tipoUsuarioSalvo.getId(),
                 tipoUsuarioSalvo.getTipoUsuario(),

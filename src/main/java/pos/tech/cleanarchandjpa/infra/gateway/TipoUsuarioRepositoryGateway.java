@@ -5,9 +5,11 @@ import org.springframework.transaction.annotation.Transactional;
 import pos.tech.cleanarchandjpa.core.domain.TipoUsuario;
 import pos.tech.cleanarchandjpa.core.dto.paginacao.PaginacaoResult;
 import pos.tech.cleanarchandjpa.core.dto.paginacao.ParametrosPag;
+import pos.tech.cleanarchandjpa.core.exception.TipoUsuarioNaoEncontradoException;
 import pos.tech.cleanarchandjpa.core.gateway.TipoUsuarioGateway;
 import pos.tech.cleanarchandjpa.infra.database.mapper.PaginacaoMapper;
 import pos.tech.cleanarchandjpa.infra.database.mapper.TipoUsuarioMapper;
+import pos.tech.cleanarchandjpa.infra.database.mapper.UsuarioMapper;
 import pos.tech.cleanarchandjpa.infra.database.repository.TipoUsuarioRepository;
 
 import java.util.UUID;
@@ -44,5 +46,12 @@ public class TipoUsuarioRepositoryGateway implements TipoUsuarioGateway {
     @Override
     public void deletarUsuario(UUID id) {
         tipoUsuarioRepository.deleteById(id);
+    }
+
+    @Override
+    public TipoUsuario buscarPeloId(UUID id) {
+      return tipoUsuarioRepository.findById(id)
+              .map(TipoUsuarioMapper::paraDominio)
+              .orElse(null);
     }
 }
