@@ -1,6 +1,7 @@
 package pos.tech.cleanarchandjpa.core.usecase.cardapio;
 
 import pos.tech.cleanarchandjpa.core.domain.Cardapio;
+import pos.tech.cleanarchandjpa.core.exception.RestauranteNaoEncontradoException;
 import pos.tech.cleanarchandjpa.core.gateway.CardapioGateway;
 import pos.tech.cleanarchandjpa.core.gateway.RestauranteGateway;
 
@@ -17,6 +18,9 @@ public class CriarCardapioUseCase {
 
     public Cardapio criarCardapio(Cardapio cardapio, UUID restauranteId) {
         var restaurante = restauranteGateway.buscarRestaurantePeloId(restauranteId);
+        if(restaurante == null){
+            throw new RestauranteNaoEncontradoException();
+        }
         var cardapioComRestaurante = cardapio.comRestaurante(restaurante);
         restaurante.adicionarCardapio(cardapioComRestaurante);
         return cardapioGateway.salvarCardapio(cardapioComRestaurante);

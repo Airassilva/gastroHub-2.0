@@ -1,17 +1,20 @@
 package pos.tech.cleanarchandjpa.core.dto;
 
-public record EnderecoDTO(
-        String bairro,
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-        String cep,
-
-        String cidade,
-
-        String estado,
-
-        String rua,
-
-        String complemento,
-
-        String numero) {
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class EnderecoDTO{
+      private String bairro;
+      private String cep;
+      private String cidade;
+      private String estado;
+      private String rua;
+      private String complemento;
+      private String numero;
 }

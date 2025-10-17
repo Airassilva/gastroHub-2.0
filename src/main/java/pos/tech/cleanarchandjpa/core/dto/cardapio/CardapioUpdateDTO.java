@@ -1,8 +1,17 @@
 package pos.tech.cleanarchandjpa.core.dto.cardapio;
 
-public record CardapioUpdateDTO (
-        String nome,
-        double preco,
-        String descricao,
-        String caminhoFoto ){
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class CardapioUpdateDTO {
+       private String nome;
+       private double preco;
+       private String descricao;
+       private String caminhoFoto;
 }

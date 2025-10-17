@@ -1,20 +1,19 @@
 package pos.tech.cleanarchandjpa.core.dto.cardapio;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.UUID;
 
 @Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class CardapioResponseDTO {
     private UUID id;
     private String nome;
     private String descricao;
     private double preco;
-
-    public CardapioResponseDTO(UUID id, String nome, String descricao, double preco) {
-        this.id = id;
-        this.nome = nome;
-        this.descricao = descricao;
-        this.preco = preco;
-    }
 }
